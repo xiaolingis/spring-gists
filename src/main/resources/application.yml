@@ -27,4 +27,3 @@ mybatis:
   type-aliases-package: com.bz.gists.domain
   configuration:
     map-underscore-to-camel-case: true
-

@@ -1,9 +1,6 @@
 package com.bz.gists.util;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.slf4j.Logger;
 
@@ -28,13 +25,7 @@ public final class DataLogUtil {
 
     private static final String TIMESTAMP_KEY = "_timestamp";
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-    }
+    private static ObjectMapper objectMapper = SpringUtil.getBean(ObjectMapper.class);
 
     public static void log(Logger logger, Object obj) {
         try {
