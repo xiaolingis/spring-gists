@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <!--属性-->
+    <property name="CHAR_SET" value="UTF-8"/>
+    <property name="LOG_DIR" value="/data/logs/gists"/>
+
+    <!--定义日志输出节点，控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!--定义日志输出节点，错误日志文件输出，按时间划分日志-->
+    <appender name="STDERR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/error/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>14</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!--定义日志输出节点，项目运行日志文件输出，按时间划分-->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/run/run.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/run/run.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!--定义日志输出节点，用于项目输入业务日志，可以异步添加进数据库，也可以使用 logstash 进行收集，按日期划分-->
+    <appender name="SERVICE_DATA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/data/service_data/service_data.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/data/service_data/service_data.%d{yyyy-MM-dd-HH}.log
+            </fileNamePattern>
+            <maxHistory>12</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!--logger 中 name 属性可以定义指定包下所有类的日志打印等级-->
+    <!--改变依赖的框架所使用的日志打印级别-->
+    <logger name="ch.qos.logback" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="org.mybatis" level="WARN"/>
+
+    <!--定义业务数据日志的打印级别，additivity 属性为 false ，不再向上级 root 传递打印信息-->
+    <logger name="SERVICE_DATA_LOGGER" level="info" additivity="false">
+        <appender-ref ref="SERVICE_DATA"/>
+    </logger>
+
+    <!--Spring Boot 特有配置，根据 profile 定义日志打印等级-->
+    <!--开发环境-->
+    <springProfile name="dev">
+        <logger name="com.bz.service" level="DEBUG">
+            <appender-ref ref="FILE"/>
+        </logger>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="com.alibaba.druid" level="INFO"/>
+        <root level="DEBUG">
+            <appender-ref ref="STDOUT"/>
+        </root>
+        <root level="ERROR">
+            <appender-ref ref="STDERR"/>
+        </root>
+    </springProfile>
+
+    <!--正式环境 -->
+    <springProfile name="prod">
+        <logger name="com.bz.service" level="INFO"/>
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="com.alibaba.druid" level="WARN"/>
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="STDERR"/>
+        </root>
+    </springProfile>
+
+</configuration>
