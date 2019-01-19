@@ -29,7 +29,7 @@ public final class ProfileUtil {
 
     public static int getServerPort() {
         String serverPort = env.getProperty("server.port");
-        return Objects.nonNull(serverPort) ? Integer.valueOf(serverPort) : 80;
+        return Objects.nonNull(serverPort) ? Integer.valueOf(serverPort) : 8080;
     }
 
     public static String getHostAddress() throws UnknownHostException {
