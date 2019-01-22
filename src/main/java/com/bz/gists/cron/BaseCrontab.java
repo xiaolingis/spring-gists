@@ -65,18 +65,18 @@ public abstract class BaseCrontab<T> {
     public static class CrontabResult {
         private final boolean status;
 
-        private String message;
+        private Object message;
 
         public CrontabResult(boolean status) {
             this.status = status;
         }
 
-        public CrontabResult setMessage(String message) {
+        public CrontabResult setMessage(Object message) {
             this.message = message;
             return this;
         }
 
-        public String getMessage() {
+        public Object getMessage() {
             return message;
         }
 
