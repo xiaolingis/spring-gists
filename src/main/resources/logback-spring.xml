@@ -46,11 +46,11 @@
     </appender>
 
     <!-- 定时任务消息日志 -->
-    <appender name="CRONTAB_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="CRONTAB_DATA" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/crontab/crontab_info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/crontab/crontab_info.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>14</maxHistory>
+            <fileNamePattern>${LOG_DIR}/crontab/crontab.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+            <maxHistory>12</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -60,26 +60,7 @@
         </filter>
         <encoder>
             <charset>${CHAR_SET}</charset>
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </encoder>
-    </appender>
-
-    <!-- 定时任务错误日志 -->
-    <appender name="CRONTAB_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/crontab/crontab_error.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/crontab/crontab_error.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>14</maxHistory>
-            <totalSizeCap>2GB</totalSizeCap>
-        </rollingPolicy>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <encoder>
-            <charset>${CHAR_SET}</charset>
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <Pattern>%msg%n</Pattern>
         </encoder>
     </appender>
 
@@ -90,13 +71,9 @@
     <logger name="org.mybatis" level="WARN"/>
 
     <!-- 定时任务日志 -->
-    <logger name="CRONTAB_INFO_LOGGER" level="INFO" additivity="false">
-        <appender-ref ref="CRONTAB_INFO"/>
+    <logger name="CRONTAB_DATA_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="CRONTAB_DATA"/>
     </logger>
-    <logger name="CRONTAB_ERROR_LOGGER" level="ERROR" additivity="false">
-        <appender-ref ref="CRONTAB_ERROR"/>
-    </logger>
-
 
     <!-- Spring Boot 特有配置，根据 profile 定义日志打印等级 -->
     <!-- 开发环境 -->

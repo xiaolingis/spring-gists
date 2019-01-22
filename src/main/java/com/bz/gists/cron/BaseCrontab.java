@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+
 /**
  * Created on 2019/1/21
  *
@@ -16,9 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseCrontab<T> {
 
-    private static final Logger CRONTAB_INFO_LOGGER = LoggerFactory.getLogger("CRONTAB_INFO_LOGGER");
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCrontab.class);
 
-    private static final Logger CRONTAB_ERROR_LOGGER = LoggerFactory.getLogger("CRONTAB_ERROR_LOGGER");
+    private static final Logger CRONTAB_DATA_LOGGER = LoggerFactory.getLogger("CRONTAB_DATA_LOGGER");
 
     final void execute() {
         this.execute(null);
@@ -33,15 +35,21 @@ public abstract class BaseCrontab<T> {
 
             long endTime = System.currentTimeMillis();
 
-            CRONTAB_INFO_LOGGER.info("crontab=[{}] ; parameter=[{}] ; start_time=[{}] ; end_time=[{}] ; duration_time(ms)=[{}] ; result=[{}]",
-                    this.getClass().getSimpleName(),
-                    JsonUtil.toJson(parameterObject),
-                    LogUtil.formatTimestamp(startTime),
-                    LogUtil.formatTimestamp(endTime),
-                    endTime - startTime,
-                    JsonUtil.toJson(result));
+            LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
+                this.put("crontab", this.getClass().getSimpleName());
+                this.put("parameter", parameterObject);
+                this.put("start_time", LogUtil.formatTimestamp(startTime));
+                this.put("end_time", LogUtil.formatTimestamp(endTime));
+                this.put("duration_time", endTime - startTime);
+                this.put("result", result);
+            }});
         } catch (Exception e) {
-            CRONTAB_ERROR_LOGGER.error("crontab=[{}] ; parameter_json=[{}] ; stacktrace: ", this.getClass().getSimpleName(), json, e);
+            LOGGER.error("crontab=[{}] ; parameter_json=[{}] ; stacktrace: ", this.getClass().getSimpleName(), json, e);
+
+            LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
+                this.put("crontab", this.getClass().getSimpleName());
+                this.put("result", CrontabResult.ofException().setMessage(String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage())));
+            }});
         }
     }
 
@@ -63,11 +71,12 @@ public abstract class BaseCrontab<T> {
     }
 
     public static class CrontabResult {
-        private final boolean status;
+
+        private final CrontabStatus status;
 
         private Object message;
 
-        public CrontabResult(boolean status) {
+        public CrontabResult(CrontabStatus status) {
             this.status = status;
         }
 
@@ -80,16 +89,35 @@ public abstract class BaseCrontab<T> {
             return message;
         }
 
-        public boolean getStatus() {
+        public CrontabStatus getStatus() {
             return status;
         }
 
         public static CrontabResult ofFail() {
-            return new CrontabResult(false);
+            return new CrontabResult(CrontabStatus.FAIL);
         }
 
-        public static CrontabResult ofSucess() {
-            return new CrontabResult(true);
+        public static CrontabResult ofSuccess() {
+            return new CrontabResult(CrontabStatus.SUCCESS);
         }
+
+        public static CrontabResult ofException() {
+            return new CrontabResult(CrontabStatus.EXCEPTION);
+        }
+    }
+
+    enum CrontabStatus {
+        /**
+         * 执行成功
+         */
+        SUCCESS,
+        /**
+         * 执行失败
+         */
+        FAIL,
+        /**
+         * 发生异常
+         */
+        EXCEPTION
     }
 }
