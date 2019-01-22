@@ -1,13 +1,11 @@
 package com.bz.gists.cron;
 
-import com.bz.gists.util.DataLogUtil;
 import com.bz.gists.util.JsonUtil;
+import com.bz.gists.util.LogUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashMap;
 
 /**
  * Created on 2019/1/21
@@ -18,7 +16,9 @@ import java.util.LinkedHashMap;
  */
 public abstract class BaseCrontab<T> {
 
-    private static final Logger CRONTAB_DATA_LOGGER = LoggerFactory.getLogger("CRONTAB_DATA_LOGGER");
+    private static final Logger CRONTAB_INFO_LOGGER = LoggerFactory.getLogger("CRONTAB_INFO_LOGGER");
+
+    private static final Logger CRONTAB_ERROR_LOGGER = LoggerFactory.getLogger("CRONTAB_ERROR_LOGGER");
 
     final void execute() {
         this.execute(null);
@@ -33,19 +33,15 @@ public abstract class BaseCrontab<T> {
 
             long endTime = System.currentTimeMillis();
 
-            DataLogUtil.log(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
-                this.put("crontab_name", this.getClass().getSimpleName());
-                this.put("parameter", parameterObject);
-                this.put("start_time", DataLogUtil.formatTimestamp(startTime));
-                this.put("end_time", DataLogUtil.formatTimestamp(endTime));
-                this.put("execution_time", endTime - startTime);
-                this.put("result", result);
-            }});
+            CRONTAB_INFO_LOGGER.info("crontab=[{}] ; parameter=[{}] ; start_time=[{}] ; end_time=[{}] ; duration_time(ms)=[{}] ; result=[{}]",
+                    this.getClass().getSimpleName(),
+                    JsonUtil.toJson(parameterObject),
+                    LogUtil.formatTimestamp(startTime),
+                    LogUtil.formatTimestamp(endTime),
+                    endTime - startTime,
+                    JsonUtil.toJson(result));
         } catch (Exception e) {
-            DataLogUtil.log(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
-                this.put("crontab_name", this.getClass().getSimpleName());
-                this.put("parameter_json", json);
-            }}, e);
+            CRONTAB_ERROR_LOGGER.error("crontab=[{}] ; parameter_json=[{}] ; stacktrace: ", this.getClass().getSimpleName(), json, e);
         }
     }
 
