@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="travelTables" targetRuntime="MyBatis3" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="useMapperCommentGenerator" value="false"/>
+        <property name="xmlFormatter" value="tk.generator.formatter.MyXmlFormatter"/>
+
+        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
+            <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
+            <property name="caseSensitive" value="true"/>
+            <property name="forceAnnotation" value="true"/>
+            <property name="beginningDelimiter" value="`"/>
+            <property name="endingDelimiter" value="`"/>
+        </plugin>
+
+        <!-- 覆盖 XML 文件 -->
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
+
+        <plugin type="tk.generator.plugins.FalseMethodPlugin"/>
+
+        <commentGenerator type="tk.generator.comment.RemarksCommentGenerator"/>
+
+        <!-- 数据库链接URL、用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/database"
+                        userId="root"
+                        password="root">
+            <property name="useInformationSchema" value="true"/>
+        </jdbcConnection>
+
+        <!-- 生成模型的包名和位置 -->
+        <javaModelGenerator targetPackage="com.bz.project.domain"
+                            targetProject="generated-sources">
+        </javaModelGenerator>
+
+        <!-- 生成的映射文件包名和位置 -->
+        <sqlMapGenerator targetPackage="mapper"
+                         targetProject="generated-sources/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- 数据库表 -->
+        <table tableName="t_user" domainObjectName="User">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+            <!-- 不单独处理 BLOB 字段 -->
+            <!--<columnOverride column="data" jdbcType="VARCHAR"/>-->
+        </table>
+    </context>
+
+</generatorConfiguration>

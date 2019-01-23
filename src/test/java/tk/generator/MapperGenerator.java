@@ -1,4 +1,4 @@
-package generator;
+package tk.generator;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
@@ -12,15 +12,13 @@ import java.util.List;
 import static org.apache.ibatis.io.Resources.getResourceAsStream;
 
 /**
- * Created on 2019/1/15
- *
- * 将包 generator 以及 resources 都放置于生产项目的测试包中，其涉及的依赖 scope 声明为 test 。直接调用 main 方法生成文件。
+ * Created on 2019/1/23
  *
  * @author zhongyongbin
  */
-public final class MbgGenerator {
+public final class MapperGenerator {
 
-    private static final String CONFIG_FILE = "generatorConfig.xml";
+    private static final String CONFIG_FILE = "tk/generatorConfig.xml";
 
     private static final String GENERATED_SOURCES = "generated-sources";
 
