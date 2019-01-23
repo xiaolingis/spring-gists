@@ -22,8 +22,6 @@
         <plugin type="generator.plugins.FalseMethodPlugin"/>
         <!-- 覆盖 XML 文件 -->
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
-        <!-- 添加 @Mapper 注解-->
-        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
         <!-- 生成注解 -->
         <commentGenerator type="generator.comment.RemarksCommentGenerator">
@@ -53,12 +51,6 @@
                          targetProject="generated-sources/resources">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
-
-        <!-- 生成 DAO 的包名和位置 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bz.project.dao"
-                             targetProject="generated-sources">
-            <property name="enableSubPackages" value="true"/>
-        </javaClientGenerator>
 
         <!-- 数据库表 -->
         <table tableName="t_user" domainObjectName="User">
