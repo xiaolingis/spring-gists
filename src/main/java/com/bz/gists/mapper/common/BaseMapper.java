@@ -7,8 +7,6 @@ package com.bz.gists.mapper.common;
  */
 public interface BaseMapper<T, PK> {
 
-    String BASE_RESULT_MAP = "BaseResultMap";
-
     /**
      * 插入记录，包括 null 值
      *
