@@ -15,6 +15,7 @@
         <jackson.version>2.9.8</jackson.version>
         <ttl.version>2.10.2</ttl.version>
         <skip.tests>true</skip.tests>
+        <tk.mybatis.version>2.1.4</tk.mybatis.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -43,6 +44,11 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${mybatis.springboot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tk.mybatis</groupId>
+            <artifactId>mapper-spring-boot-starter</artifactId>
+            <version>${tk.mybatis.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

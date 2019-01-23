@@ -1,4 +1,4 @@
-package com.bz.gists.repository.common;
+package com.bz.gists.repository.tk.common;
 
 import com.bz.gists.exception.NotFoundException;
 

@@ -1,4 +1,4 @@
-package com.bz.gists.repository.common;
+package com.bz.gists.repository.mybatis.common;
 
 import com.bz.gists.mapper.common.BaseMapper;
 
