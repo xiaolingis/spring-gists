@@ -14,7 +14,7 @@ import java.io.StringReader;
  *
  * @author zhongyongbin
  */
-public class MyXmlFormatter extends DefaultXmlFormatter {
+public class FormatXmlFormatter extends DefaultXmlFormatter {
 
     private static final String SPACE = "    ";
 

@@ -6,7 +6,6 @@ import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
-import org.mybatis.generator.plugins.ToStringPlugin;
 
 import java.util.List;
 import java.util.Properties;
@@ -14,11 +13,11 @@ import java.util.Properties;
 import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 
 /**
-  * Created on 2018-11-01
-  *
-  * @author zhongyongbin
-  */
-public class MyToStringPlugin extends ToStringPlugin {
+ * Created on 2018-11-01
+ *
+ * @author zhongyongbin
+ */
+public class ToStringPlugin extends org.mybatis.generator.plugins.ToStringPlugin {
 
     private boolean useToStringFromRoot;
 

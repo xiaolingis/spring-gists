@@ -7,7 +7,7 @@
     <context id="travelTables" targetRuntime="MyBatis3" defaultModelType="flat">
         <property name="javaFileEncoding" value="UTF-8"/>
         <property name="useMapperCommentGenerator" value="false"/>
-        <property name="xmlFormatter" value="tk.generator.formatter.MyXmlFormatter"/>
+        <property name="xmlFormatter" value="tk.generator.formatter.FormatXmlFormatter"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
             <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
@@ -17,9 +17,10 @@
             <property name="endingDelimiter" value="`"/>
         </plugin>
 
+        <!-- 生成的模型实现 toString -->
+        <plugin type="generator.plugins.ToStringPlugin"/>
         <!-- 覆盖 XML 文件 -->
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
-
         <plugin type="tk.generator.plugins.FalseMethodPlugin"/>
 
         <commentGenerator type="tk.generator.comment.RemarksCommentGenerator"/>
