@@ -2,6 +2,8 @@ package com.bz.gists.repository.mybatis.spec.common;
 
 import com.bz.gists.exception.UnexpectedException;
 import com.bz.gists.mapper.common.BaseMapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +51,20 @@ public abstract class AbstractDaoRepository<T, ID, M extends BaseMapper<T, ID>> 
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<T> findAll(ISpecification specification) {
+    public List<T> findALLInternal(ISpecification specification) {
         return (List<T>) invokeMapper(specification.toQuery(AbstractDaoSpecification.MapperQuery.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Page<T> findALLInternal(ISpecification specification, int offset, int count) {
+        PageHelper.startPage(offset, count);
+        return (Page<T>) invokeMapper(specification.toQuery(AbstractDaoSpecification.MapperQuery.class));
+    }
+
+    @Override
+    protected long countInternal(ISpecification specification) {
+        return (long) invokeMapper(specification.toQuery(AbstractDaoSpecification.MapperQuery.class));
     }
 
     public final void saveIncludeNull(T entity) {

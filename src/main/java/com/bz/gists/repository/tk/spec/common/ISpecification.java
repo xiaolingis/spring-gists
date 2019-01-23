@@ -9,7 +9,7 @@ public interface ISpecification {
 
     @SuppressWarnings("unchecked")
     default <Q> Q toQuery(Class<Q> queryType) {
-        Object query = toQueryInternal();
+        Object query = toQuery();
         if (query.getClass() != queryType) {
             throw new IllegalArgumentException("specification query type illegal");
         }
@@ -17,5 +17,5 @@ public interface ISpecification {
         return (Q) query;
     }
 
-    Object toQueryInternal();
+    Object toQuery();
 }

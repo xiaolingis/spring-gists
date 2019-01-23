@@ -1,6 +1,7 @@
 package com.bz.gists.repository.tk.spec.common;
 
-import org.apache.ibatis.session.RowBounds;
+import com.github.pagehelper.Page;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -49,8 +50,13 @@ public abstract class AbstractDaoRepository<T, ID, M extends Mapper<T>> extends 
     }
 
     @Override
-    protected List<T> findALLPaginationInternal(ISpecification specification, int page, int count) {
-        return mapper.selectByExampleAndRowBounds(specification.toQuery(Example.class), new RowBounds(page, count));
+    protected Page<T> findALLInternal(ISpecification specification, int offset, int count) {
+        return (Page<T>) mapper.selectByExample(specification.toQuery(Example.class));
+    }
+
+    @Override
+    protected long countInternal(ISpecification specification) {
+        return mapper.selectCountByExample(specification.toQuery(Example.class));
     }
 
     public final void saveIncludeNull(T entity) {
