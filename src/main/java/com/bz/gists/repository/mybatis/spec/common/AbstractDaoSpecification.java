@@ -12,10 +12,19 @@ public abstract class AbstractDaoSpecification implements ISpecification {
         return new MapperQuery(getMapperMethodName(), getMapperParameters());
     }
 
+    /**
+     * 返回要使用的 Mapper 的方法
+     */
     protected abstract String getMapperMethodName();
 
+    /**
+     * 返回 Mapper 方法的参数
+     */
     protected abstract Object[] getMapperParameters();
 
+    /**
+     * Mapper 查询对象，主要利用 mapper 的方法名和参数构造成查询体用于查询
+     */
     public static class MapperQuery {
         private final String methodName;
 
