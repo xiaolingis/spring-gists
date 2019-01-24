@@ -23,7 +23,7 @@ public abstract class BaseRepository<T, ID> {
      */
     public final T get(ID id) {
         T entity = getInternal(id);
-        return Optional.ofNullable(entity).orElseThrow(() -> new NotFoundException("id has no corresponding entity"));
+        return Optional.ofNullable(entity).orElseThrow(() -> new NotFoundException("there is no corresponding entity for this id"));
     }
 
     /**
