@@ -1,4 +1,4 @@
-package com.bz.gists.domain.ao.response;
+package com.bz.gists.domain.rest.response;
 
 /**
  * Created on 2019/1/19

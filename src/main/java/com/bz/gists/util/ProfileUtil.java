@@ -1,5 +1,6 @@
 package com.bz.gists.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
@@ -20,11 +21,13 @@ public final class ProfileUtil {
     }
 
     public static String getActiveProfile() {
-        return env.getProperty("spring.profiles.active");
+        String activeProfile = env.getProperty("spring.profiles.active");
+        return StringUtils.isNotBlank(activeProfile) ? activeProfile : "default";
     }
 
     public static String getApplicationName() {
-        return env.getProperty("spring.application.name");
+        String applicationName = env.getProperty("spring.application.name");
+        return StringUtils.isNotBlank(applicationName) ? applicationName : "spring-boot-application";
     }
 
     public static int getServerPort() {

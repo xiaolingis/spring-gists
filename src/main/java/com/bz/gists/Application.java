@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.net.UnknownHostException;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Created on 2019/1/19
  *
@@ -22,7 +20,7 @@ import javax.annotation.PostConstruct;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @SpringBootApplication
-public final class Application {
+public class Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
@@ -34,19 +32,15 @@ public final class Application {
         log();
     }
 
-    @PostConstruct
-    public void initApplication() {
-        LOGGER.info("Running with Spring profile : {}", ProfileUtil.getActiveProfile());
-    }
-
     private static void log() throws UnknownHostException {
         StringBuilder log = new StringBuilder();
         log.append("\n----------------------------------------------------------\n\t");
+        log.append("Running with spring profile : {}\n\t");
         log.append("Application '{}' is running! Access URLs:\n\t");
         log.append("Local: \t\thttp://127.0.0.1:{}\n\t");
         log.append("External: \thttp://{}:{}");
         log.append("\n----------------------------------------------------------");
 
-        LOGGER.info(log.toString(), ProfileUtil.getApplicationName(), ProfileUtil.getServerPort(), ProfileUtil.getHostAddress(), ProfileUtil.getServerPort());
+        LOGGER.info(log.toString(), ProfileUtil.getActiveProfile(), ProfileUtil.getApplicationName(), ProfileUtil.getServerPort(), ProfileUtil.getHostAddress(), ProfileUtil.getServerPort());
     }
 }

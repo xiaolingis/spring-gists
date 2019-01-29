@@ -78,16 +78,18 @@
     <!-- Spring Boot 特有配置，根据 profile 定义日志打印等级 -->
     <!-- 开发环境 -->
     <springProfile name="dev">
-        <logger name="com.bz.service" level="DEBUG">
+        <logger name="com.bz.gists" level="DEBUG">
             <appender-ref ref="FILE"/>
         </logger>
         <logger name="org.springframework" level="INFO"/>
-        <logger name="com.alibaba.druid" level="INFO"/>
+        <logger name="com.zaxxer.hikari" level="INFO"/>
         <root level="DEBUG">
             <appender-ref ref="STDOUT"/>
         </root>
-        <root level="ERROR">
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
             <appender-ref ref="STDERR"/>
+            <appender-ref ref="FILE"/>
         </root>
     </springProfile>
 

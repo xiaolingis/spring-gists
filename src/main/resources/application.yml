@@ -4,10 +4,10 @@ server:
 
 # spring 配置
 spring:
-  profile:
+  profiles:
     active: '@profiles.active@'
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
   jackson:
     deserialization:
