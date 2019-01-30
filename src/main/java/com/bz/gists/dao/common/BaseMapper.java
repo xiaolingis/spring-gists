@@ -1,4 +1,4 @@
-package com.bz.gists.mapper.common;
+package com.bz.gists.dao.common;
 
 /**
  * Created on 2019/1/17

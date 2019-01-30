@@ -5,7 +5,7 @@
     <property name="LOG_DIR" value="/data/logs/gists"/>
 
     <!-- 控制台输出 -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <charset>${CHAR_SET}</charset>
             <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
@@ -13,7 +13,7 @@
     </appender>
 
     <!-- 错误日志文件输出 -->
-    <appender name="STDERR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/error/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -32,13 +32,37 @@
     </appender>
 
     <!-- 项目运行日志文件输出 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/run/run.log</file>
+    <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/info/info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/run/run.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_DIR}/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- 项目运行日志文件输出 -->
+    <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/debug/debug.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/debug/debug.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+            <maxHistory>12</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <encoder>
             <charset>${CHAR_SET}</charset>
             <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
@@ -79,17 +103,18 @@
     <!-- 开发环境 -->
     <springProfile name="dev">
         <logger name="com.bz.gists" level="DEBUG">
-            <appender-ref ref="FILE"/>
+            <appender-ref ref="INFO"/>
         </logger>
         <logger name="org.springframework" level="INFO"/>
         <logger name="com.zaxxer.hikari" level="INFO"/>
         <root level="DEBUG">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="DEBUG"/>
         </root>
         <root level="INFO">
-            <appender-ref ref="STDOUT"/>
-            <appender-ref ref="STDERR"/>
-            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="INFO"/>
+            <appender-ref ref="ERROR"/>
         </root>
     </springProfile>
 
@@ -99,8 +124,8 @@
         <logger name="org.springframework" level="WARN"/>
         <logger name="com.alibaba.druid" level="WARN"/>
         <root level="INFO">
-            <appender-ref ref="FILE"/>
-            <appender-ref ref="STDERR"/>
+            <appender-ref ref="INFO"/>
+            <appender-ref ref="ERROR"/>
         </root>
     </springProfile>
 
