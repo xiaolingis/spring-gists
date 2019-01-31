@@ -63,7 +63,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     /**
-     * 如果转换的类型为泛型，则覆盖该方法并范围泛型类型
+     * 如果转换的类型为泛型，则覆盖该方法并返回泛型类型
      */
     protected Class<?>[] getParametricType() {
         return null;
