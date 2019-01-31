@@ -22,7 +22,7 @@ public final class ProfileUtil {
 
     public static String getActiveProfile() {
         String activeProfile = env.getProperty("spring.profiles.active");
-        return StringUtils.isNotBlank(activeProfile) ? activeProfile : "default";
+        return StringUtils.isNotBlank(activeProfile) ? activeProfile : "";
     }
 
     public static String getApplicationName() {
