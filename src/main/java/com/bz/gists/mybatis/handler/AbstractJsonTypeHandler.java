@@ -58,8 +58,6 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return fromJson(callableStatement.getString(i));
     }
 
-//    protected abstract Class<?> getType();
-
     private Class<?> getType() {
         return (Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }

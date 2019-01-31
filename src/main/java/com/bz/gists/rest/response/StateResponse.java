@@ -57,6 +57,6 @@ public class StateResponse {
         /**
          * 失败
          */
-        FAIL;
+        FAIL
     }
 }
