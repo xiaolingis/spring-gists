@@ -27,20 +27,18 @@ public abstract class BaseCrontab<T> {
     }
 
     final void execute(String json) {
+        long startTime = System.currentTimeMillis();
         try {
-            long startTime = System.currentTimeMillis();
 
             T parameterObject = StringUtils.isNotBlank(json) ? JsonUtil.fromJson(json, getParameterType()) : null;
             CrontabResult result = this.executeInternal(parameterObject);
-
-            long endTime = System.currentTimeMillis();
 
             LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
                 this.put("crontab", this.getClass().getSimpleName());
                 this.put("parameter", parameterObject);
                 this.put("start_time", LogUtil.formatTimestamp(startTime));
-                this.put("end_time", LogUtil.formatTimestamp(endTime));
-                this.put("duration_time", endTime - startTime);
+                this.put("end_time", LogUtil.formatTimestamp(System.currentTimeMillis()));
+                this.put("duration_time", System.currentTimeMillis() - startTime);
                 this.put("result", result);
             }});
         } catch (Exception e) {
@@ -48,6 +46,10 @@ public abstract class BaseCrontab<T> {
 
             LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
                 this.put("crontab", this.getClass().getSimpleName());
+                this.put("start_time", LogUtil.formatTimestamp(startTime));
+                this.put("end_time", LogUtil.formatTimestamp(System.currentTimeMillis()));
+                this.put("duration_time", System.currentTimeMillis() - startTime);
+                this.put("parameter", json);
                 this.put("result", CrontabResult.ofException().setMessage(String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage())));
             }});
         }
