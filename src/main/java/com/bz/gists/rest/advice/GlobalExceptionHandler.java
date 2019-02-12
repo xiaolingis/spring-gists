@@ -2,7 +2,7 @@ package com.bz.gists.rest.advice;
 
 import com.google.common.base.Joiner;
 
-import com.bz.gists.rest.response.StateResponse;
+import com.bz.gists.domain.response.StateResponse;
 import com.bz.gists.exception.ForbiddenException;
 import com.bz.gists.exception.InvalidParameterException;
 import com.bz.gists.exception.NotFoundException;
