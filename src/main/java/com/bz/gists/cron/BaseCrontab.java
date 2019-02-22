@@ -4,10 +4,9 @@ import com.bz.gists.util.JsonUtil;
 import com.bz.gists.util.LogUtil;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashMap;
 
 /**
  * Created on 2019/1/21
@@ -33,25 +32,23 @@ public abstract class BaseCrontab<T> {
             T parameterObject = StringUtils.isNotBlank(json) ? JsonUtil.fromJson(json, getParameterType()) : null;
             CrontabResult result = this.executeInternal(parameterObject);
 
-            LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
-                this.put("crontab", this.getClass().getSimpleName());
-                this.put("parameter", parameterObject);
-                this.put("start_time", LogUtil.formatTimestamp(startTime));
-                this.put("end_time", LogUtil.formatTimestamp(System.currentTimeMillis()));
-                this.put("duration_time", System.currentTimeMillis() - startTime);
-                this.put("result", result);
-            }});
+            LogUtil.dataLog(CRONTAB_DATA_LOGGER,
+                    Pair.of("crontab", this.getClass().getSimpleName()),
+                    Pair.of("parameter", parameterObject),
+                    Pair.of("start_time", LogUtil.formatTimestamp(startTime)),
+                    Pair.of("end_time", LogUtil.formatTimestamp(System.currentTimeMillis())),
+                    Pair.of("duration_time", System.currentTimeMillis() - startTime),
+                    Pair.of("result", result));
         } catch (Exception e) {
             LOGGER.error("crontab=[{}] ; parameter_json=[{}] ; stacktrace: ", this.getClass().getSimpleName(), json, e);
 
-            LogUtil.dataLog(CRONTAB_DATA_LOGGER, new LinkedHashMap<String, Object>() {{
-                this.put("crontab", this.getClass().getSimpleName());
-                this.put("start_time", LogUtil.formatTimestamp(startTime));
-                this.put("end_time", LogUtil.formatTimestamp(System.currentTimeMillis()));
-                this.put("duration_time", System.currentTimeMillis() - startTime);
-                this.put("parameter", json);
-                this.put("result", CrontabResult.ofException().setMessage(String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage())));
-            }});
+            LogUtil.dataLog(CRONTAB_DATA_LOGGER,
+                    Pair.of("crontab", this.getClass().getSimpleName()),
+                    Pair.of("start_time", LogUtil.formatTimestamp(startTime)),
+                    Pair.of("end_time", LogUtil.formatTimestamp(System.currentTimeMillis())),
+                    Pair.of("duration_time", System.currentTimeMillis() - startTime),
+                    Pair.of("parameter", json),
+                    Pair.of("result", CrontabResult.ofException().setMessage(String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage()))));
         }
     }
 
