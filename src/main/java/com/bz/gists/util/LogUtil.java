@@ -1,6 +1,7 @@
 package com.bz.gists.util;
 
 import org.slf4j.Logger;
+import org.springframework.util.Assert;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,11 +23,32 @@ public final class LogUtil {
 
     private static final DateTimeFormatter LOG_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-    public static void dataLog(Logger logger, Object obj) {
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put(TIMESTAMP_KEY, LOG_TIME_FORMATTER.format(LocalDateTime.now()));
-        data.put(SOURCE_KEY, obj);
-        logger.info(JsonUtil.toJson(data));
+    public static void dataLog(Logger logger, Object data) {
+        Map<String, Object> log = new LinkedHashMap<>();
+        log.put(TIMESTAMP_KEY, LOG_TIME_FORMATTER.format(LocalDateTime.now()));
+        log.put(SOURCE_KEY, data);
+        logger.info(JsonUtil.toJson(log));
+    }
+
+    public static void dataLog(Logger logger, String[] keys, Object[] values) {
+        Assert.notEmpty(keys, "keys can not be empty");
+        Assert.notEmpty(values, "values can not be null");
+        if (keys.length != values.length) {
+            throw new IllegalArgumentException("the key length should be the same as the value length");
+        }
+
+        int dataLength = keys.length;
+
+        Map<String, Object> data = new LinkedHashMap<>(dataLength);
+
+        for (int i = 0; i < dataLength; i++) {
+            data.put(keys[i], values[i]);
+        }
+
+        logger.info(JsonUtil.toJson(new LinkedHashMap<String, Object>() {{
+            this.put(TIMESTAMP_KEY, LOG_TIME_FORMATTER.format(LocalDateTime.now()));
+            this.put(SOURCE_KEY, data);
+        }}));
     }
 
     public static String formatTimestamp(long timestamp) {
