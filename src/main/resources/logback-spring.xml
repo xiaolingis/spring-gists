@@ -69,9 +69,28 @@
         </encoder>
     </appender>
 
+    <!-- 访问日志 -->
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/access/access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/access/access.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+            <maxHistory>12</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <charset>${CHAR_SET}</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+
     <!-- 定时任务消息日志 -->
     <appender name="CRONTAB_DATA" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/crontab/crontab_info.log</file>
+        <file>${LOG_DIR}/crontab/crontab.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/crontab/crontab.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
             <maxHistory>12</maxHistory>
@@ -94,7 +113,10 @@
     <logger name="org.apache" level="WARN"/>
     <logger name="org.mybatis" level="WARN"/>
 
-    <!-- 定时任务日志 -->
+    <logger name="ACCESS_LOGGER" level="INFO" additivity="false">
+        <appender-ref ref="ACCESS"/>
+    </logger>
+
     <logger name="CRONTAB_DATA_LOGGER" level="INFO" additivity="false">
         <appender-ref ref="CRONTAB_DATA"/>
     </logger>
