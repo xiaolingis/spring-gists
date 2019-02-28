@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author zhongyongbin
  */
 @WebFilter(filterName = "accessTraceFilter", urlPatterns = "/*")
-public class AccessTraceFilter implements Filter {
+public class TraceAccessFilter implements Filter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTraceFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraceAccessFilter.class);
 
     private static final Logger ACCESS_LOGGER = LoggerFactory.getLogger("ACCESS_LOGGER");
 
