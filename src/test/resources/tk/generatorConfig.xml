@@ -18,7 +18,7 @@
         </plugin>
 
         <!-- 生成的模型实现 toString -->
-        <plugin type="generator.plugins.ToStringPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
         <!-- 生成的模型实现可序列化 -->
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
         <!-- 覆盖 XML 文件 -->
