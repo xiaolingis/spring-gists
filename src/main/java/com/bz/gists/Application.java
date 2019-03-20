@@ -36,7 +36,7 @@ public class Application {
         log.append("Running with spring profile : {}\n\t");
         log.append("Application '{}' is running! Access URLs:\n\t");
         log.append("Local: \t\thttp://127.0.0.1:{}\n\t");
-        log.append("External: \t{}");
+        log.append("External: \thttp://{}:{}");
         log.append("\n----------------------------------------------------------");
 
         LOGGER.info(log.toString(),
