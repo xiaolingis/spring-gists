@@ -36,7 +36,7 @@
         </jdbcConnection>
 
         <!-- 生成模型的包名和位置 -->
-        <javaModelGenerator targetPackage="com.bz.project.domain"
+        <javaModelGenerator targetPackage="com.bz.gists.domain"
                             targetProject="generated-sources">
         </javaModelGenerator>
 

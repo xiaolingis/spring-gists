@@ -40,7 +40,7 @@
         </javaTypeResolver>
 
         <!-- 生成模型的包名和位置 -->
-        <javaModelGenerator targetPackage="com.bz.project.domain.entity"
+        <javaModelGenerator targetPackage="com.bz.gists.domain.entity"
                             targetProject="generated-sources">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
