@@ -3,6 +3,7 @@ package com.bz.gists.rest.advice;
 import com.bz.gists.common.Constants;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StreamUtils;
@@ -11,6 +12,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAdapter;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
@@ -42,6 +44,16 @@ public class RequestBodyAttributeAdvice extends RequestBodyAdviceAdapter {
             RequestContextHolder.getRequestAttributes().setAttribute(REQUEST_BODY_ATTRIBUTE_NAME, payload, RequestAttributes.SCOPE_REQUEST);
         }
 
-        return super.beforeBodyRead(inputMessage, parameter, targetType, converterType);
+        return new HttpInputMessage() {
+            @Override
+            public InputStream getBody() {
+                return new ByteArrayInputStream(payload.getBytes(Constants.DEFAULT_CHARSET));
+            }
+
+            @Override
+            public HttpHeaders getHeaders() {
+                return inputMessage.getHeaders();
+            }
+        };
     }
 }
