@@ -15,7 +15,6 @@
         </plugin>
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
-        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
         <commentGenerator type="tk.mybatis.mapper.generator.MapperCommentGenerator"/>
 
