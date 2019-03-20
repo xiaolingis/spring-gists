@@ -4,28 +4,20 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <context id="travelTables" targetRuntime="MyBatis3" defaultModelType="flat">
+    <context id="travelTables" targetRuntime="MyBatis3Simple" defaultModelType="flat">
         <property name="javaFileEncoding" value="UTF-8"/>
-        <property name="useMapperCommentGenerator" value="false"/>
-        <property name="xmlFormatter" value="tk.generator.formatter.FormatXmlFormatter"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
             <property name="mappers" value="tk.mybatis.mapper.common.Mapper"/>
             <property name="caseSensitive" value="true"/>
-            <property name="forceAnnotation" value="true"/>
-            <property name="beginningDelimiter" value="`"/>
-            <property name="endingDelimiter" value="`"/>
         </plugin>
-
-        <!-- 生成的模型实现 toString -->
-        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
-        <!-- 生成的模型实现可序列化 -->
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
-        <!-- 覆盖 XML 文件 -->
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
-        <plugin type="tk.generator.plugins.FalseMethodPlugin"/>
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
 
-        <commentGenerator type="tk.generator.comment.RemarksCommentGenerator"/>
+        <commentGenerator type="tk.mybatis.mapper.generator.MapperCommentGenerator"/>
 
         <!-- 数据库链接URL、用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
@@ -37,20 +29,23 @@
 
         <!-- 生成模型的包名和位置 -->
         <javaModelGenerator targetPackage="com.bz.gists.domain.entity"
-                            targetProject="generated-sources">
+                            targetProject="generated-sources/java">
         </javaModelGenerator>
 
         <!-- 生成的映射文件包名和位置 -->
-        <sqlMapGenerator targetPackage="mapper"
+        <sqlMapGenerator targetPackage="com.bz.gists.mapper"
                          targetProject="generated-sources/resources">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
+        <!--生成的映射几口包名和位置-->
+        <javaClientGenerator targetPackage="com.bz.gists.mapper"
+                             targetProject="generated-sources/java"
+                             type="XMLMAPPER"/>
+
         <!-- 数据库表 -->
         <table tableName="t_user" domainObjectName="User">
             <generatedKey column="id" sqlStatement="JDBC"/>
-            <!-- 不单独处理 BLOB 字段 -->
-            <!--<columnOverride column="data" jdbcType="VARCHAR"/>-->
         </table>
     </context>
 
