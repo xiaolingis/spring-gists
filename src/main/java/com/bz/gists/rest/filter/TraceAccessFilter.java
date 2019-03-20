@@ -5,6 +5,7 @@ import com.bz.gists.util.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author zhongyongbin
  */
+@Component
 @WebFilter(filterName = "traceAccessFilter", urlPatterns = "/*")
 public class TraceAccessFilter implements Filter {
 
