@@ -1,6 +1,6 @@
 # 服务器配置
 server:
-  prot: 8080
+  port: 8080
 
 # spring 配置
 spring:
