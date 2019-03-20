@@ -40,6 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = ForbiddenException.class)
     public ResponseEntity<Object> forbiddenExceptionHandler(Exception ex) {
+        LOGGER.debug("forbidden exception!", ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(StateResponse.ofFail().setMessage(ex.getMessage()));
     }
 
@@ -48,11 +49,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             ValidationException.class
     })
     public ResponseEntity<Object> invalidParameterExceptionHandler(Exception ex) {
+        LOGGER.debug("invalid parameter exception!", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StateResponse.ofFail().setMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<Object> notFoundExceptionExceptionHandler(Exception ex) {
+        LOGGER.debug("not found exception!", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StateResponse.ofFail().setMessage(ex.getMessage()));
     }
 
