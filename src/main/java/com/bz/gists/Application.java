@@ -43,6 +43,7 @@ public class Application {
                 ProfileUtil.getActiveProfile(),
                 ProfileUtil.getApplicationName(),
                 ProfileUtil.getServerPort(),
-                ProfileUtil.getHostAddress());
+                ProfileUtil.getHostAddress(),
+                ProfileUtil.getServerPort());
     }
 }
