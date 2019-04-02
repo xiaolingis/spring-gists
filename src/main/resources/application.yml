@@ -24,6 +24,5 @@ mybatis:
   mapper-locations:
     - classpath:mapper/*.xml
     - classpath:mapper/extend/*.xml
-  type-aliases-package: com.bz.gists.domain
   configuration:
     map-underscore-to-camel-case: true
