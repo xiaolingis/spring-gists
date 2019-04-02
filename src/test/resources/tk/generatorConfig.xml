@@ -28,7 +28,7 @@
 
         <!-- 生成模型的包名和位置 -->
         <javaModelGenerator targetPackage="com.bz.gists.domain.entity"
-                            targetProject="generated-sources/java">
+                            targetProject="generated-sources">
         </javaModelGenerator>
 
         <!-- 生成的映射文件包名和位置 -->
