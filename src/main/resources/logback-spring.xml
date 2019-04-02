@@ -142,7 +142,7 @@
 
     <!-- 正式环境 -->
     <springProfile name="prod">
-        <logger name="com.bz.service" level="INFO"/>
+        <logger name="com.bz.gists" level="INFO"/>
         <logger name="org.springframework" level="WARN"/>
         <logger name="com.zaxxer.hikari" level="WARN"/>
         <root level="INFO">
