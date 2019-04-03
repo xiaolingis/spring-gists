@@ -14,6 +14,7 @@ spring:
       FAIL_ON_UNKNOWN_PROPERTIES: false
     serialization:
       WRITE_ENUMS_USING_INDEX: true
+      WRITE_DATES_AS_TIMESTAMPS: true
     default-property-inclusion: NON_NULL
     property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
   application:
