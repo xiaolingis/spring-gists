@@ -11,8 +11,6 @@ public class StateResponse {
 
     private String message;
 
-    private Object data;
-
     public String getState() {
         return state;
     }
@@ -28,15 +26,6 @@ public class StateResponse {
 
     public StateResponse setMessage(String message) {
         this.message = message;
-        return this;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public StateResponse setData(Object data) {
-        this.data = data;
         return this;
     }
 
