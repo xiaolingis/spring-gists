@@ -4,16 +4,27 @@ import com.bz.gists.exception.UnexpectedException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+
 /**
  * Created on 2019/1/19
  *
  * @author zhongyongbin
  */
-public final class JsonUtil {
+@Component
+public final class JsonUtil implements ApplicationContextAware {
 
-    private static ObjectMapper objectMapper = SpringUtil.getBean(ObjectMapper.class);
+    private static ObjectMapper objectMapper;
 
     private JsonUtil() {
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        JsonUtil.objectMapper = applicationContext.getBean(ObjectMapper.class);
     }
 
     /**
