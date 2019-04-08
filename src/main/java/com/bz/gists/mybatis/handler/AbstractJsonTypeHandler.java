@@ -51,6 +51,9 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return fromJson(callableStatement.getString(i));
     }
 
+    /**
+     * 返回泛型类型引用
+     */
     public abstract TypeReference<T> getTypeReference();
 
     /**
