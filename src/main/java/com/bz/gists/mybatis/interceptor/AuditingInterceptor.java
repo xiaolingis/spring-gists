@@ -9,6 +9,7 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.springframework.stereotype.Component;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -25,6 +26,7 @@ import java.util.Properties;
  *
  * @author zhongyongbin
  */
+@Component
 @Intercepts(@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}))
 public class AuditingInterceptor implements Interceptor {
 

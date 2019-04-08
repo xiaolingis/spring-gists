@@ -27,3 +27,4 @@ mybatis:
     - classpath:mapper/extend/*.xml
   configuration:
     map-underscore-to-camel-case: true
+  type-handlers-package: com.bz.gists.mybatis.handler
