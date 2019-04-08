@@ -1,16 +1,16 @@
 package com.bz.gists.mybatis.handler;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeException;
+import org.apache.ibatis.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,12 +31,13 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJsonTypeHandler.class);
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private final Type rawType;
 
-    static {
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    AbstractJsonTypeHandler() {
+        rawType = getSuperclassTypeParameter(getClass());
     }
 
     @Override
@@ -59,20 +60,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return fromJson(callableStatement.getString(i));
     }
 
-    private Class<?> getType() {
-        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getRawType();
-        }
-        return (Class<?>) type;
-    }
-
-    /**
-     * 如果转换的类型为泛型，则覆盖该方法并返回泛型类型
-     */
-    protected Class<?>[] getParametricType() {
-        return null;
-    }
+    public abstract TypeReference<T> getTypeReference();
 
     /**
      * 在 JSON 序列化之前对对象进行操作
@@ -87,8 +75,28 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     private JavaType getJavaType() {
-        Class<?>[] parametricType = getParametricType();
-        return Objects.nonNull(parametricType) && parametricType.length > 0 ? objectMapper.getTypeFactory().constructParametricType(getType(), parametricType) : objectMapper.getTypeFactory().constructType(getType());
+        return objectMapper.getTypeFactory().constructType(rawType);
+    }
+
+    private Type getSuperclassTypeParameter(Class<?> clazz) {
+        Type genericSuperclass = clazz.getGenericSuperclass();
+        if (genericSuperclass instanceof Class) {
+            // try to climb up the hierarchy until meet something useful
+            if (TypeReference.class != genericSuperclass) {
+                return getSuperclassTypeParameter(clazz.getSuperclass());
+            }
+
+            throw new TypeException("'" + getClass() + "' extends TypeReference but misses the type parameter. "
+                    + "Remove the extension or add a type parameter to it.");
+        }
+
+        Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        // TODO remove this when Reflector is fixed to return Types
+        if (rawType instanceof ParameterizedType) {
+            rawType = ((ParameterizedType) rawType).getRawType();
+        }
+
+        return rawType;
     }
 
     private String toJson(T obj) {
