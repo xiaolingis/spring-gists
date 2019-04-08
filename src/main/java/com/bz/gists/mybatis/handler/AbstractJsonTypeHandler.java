@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +51,6 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     /**
-     * 返回泛型类型引用
-     */
-    public abstract TypeReference<T> getTypeReference();
-
-    /**
      * 在 JSON 序列化之前对对象进行操作
      */
     protected void beforeToJson(T obj) {
@@ -69,7 +63,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     private JavaType getJavaType() {
-        return objectMapper.getTypeFactory().constructType(getTypeReference().getRawType());
+        return objectMapper.getTypeFactory().constructType(getRawType());
     }
 
     private String toJson(T obj) {

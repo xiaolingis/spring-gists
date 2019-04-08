@@ -15,7 +15,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -65,21 +64,15 @@ public class AuditingInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
     }
 
-    @SuppressWarnings("unchecked")
     private void invokeWriteMethod(Object entity, String fieldName, Object value) throws Exception {
-        if (entity instanceof Map) {
-            Map param = (Map) entity;
-            param.put(fieldName, value);
-        } else {
-            BeanInfo beanInfo = Introspector.getBeanInfo(entity.getClass());
-            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-                if (StringUtils.equals(propertyDescriptor.getName(), fieldName)) {
-                    Method setter = propertyDescriptor.getWriteMethod();
-                    if (Objects.nonNull(setter)) {
-                        setter.invoke(entity, value);
-                    }
-                    break;
+        BeanInfo beanInfo = Introspector.getBeanInfo(entity.getClass());
+        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+            if (StringUtils.equals(propertyDescriptor.getName(), fieldName)) {
+                Method setter = propertyDescriptor.getWriteMethod();
+                if (Objects.nonNull(setter)) {
+                    setter.invoke(entity, value);
                 }
+                break;
             }
         }
     }
