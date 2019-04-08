@@ -6,14 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,14 +28,8 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJsonTypeHandler.class);
 
-    private final Type rawType;
-
     @Autowired
     private ObjectMapper objectMapper;
-
-    AbstractJsonTypeHandler() {
-        rawType = getSuperclassTypeParameter(getClass());
-    }
 
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, T t, JdbcType jdbcType) throws SQLException {
@@ -75,28 +66,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     private JavaType getJavaType() {
-        return objectMapper.getTypeFactory().constructType(rawType);
-    }
-
-    private Type getSuperclassTypeParameter(Class<?> clazz) {
-        Type genericSuperclass = clazz.getGenericSuperclass();
-        if (genericSuperclass instanceof Class) {
-            // try to climb up the hierarchy until meet something useful
-            if (TypeReference.class != genericSuperclass) {
-                return getSuperclassTypeParameter(clazz.getSuperclass());
-            }
-
-            throw new TypeException("'" + getClass() + "' extends TypeReference but misses the type parameter. "
-                    + "Remove the extension or add a type parameter to it.");
-        }
-
-        Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
-        // TODO remove this when Reflector is fixed to return Types
-        if (rawType instanceof ParameterizedType) {
-            rawType = ((ParameterizedType) rawType).getRawType();
-        }
-
-        return rawType;
+        return objectMapper.getTypeFactory().constructType(getTypeReference().getRawType());
     }
 
     private String toJson(T obj) {
