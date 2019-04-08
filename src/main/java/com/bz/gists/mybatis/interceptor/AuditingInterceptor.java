@@ -15,6 +15,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -64,24 +65,30 @@ public class AuditingInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
     }
 
-    private void invokeWriteMethod(Object entity, String fieldName) throws Exception {
-        BeanInfo beanInfo = Introspector.getBeanInfo(entity.getClass());
-        for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            if (StringUtils.equals(propertyDescriptor.getName(), fieldName)) {
-                Method setter = propertyDescriptor.getWriteMethod();
-                if (Objects.nonNull(setter)) {
-                    setter.invoke(entity, new Date());
+    @SuppressWarnings("unchecked")
+    private void invokeWriteMethod(Object entity, String fieldName, Object value) throws Exception {
+        if (entity instanceof Map) {
+            Map param = (Map) entity;
+            param.put(fieldName, value);
+        } else {
+            BeanInfo beanInfo = Introspector.getBeanInfo(entity.getClass());
+            for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
+                if (StringUtils.equals(propertyDescriptor.getName(), fieldName)) {
+                    Method setter = propertyDescriptor.getWriteMethod();
+                    if (Objects.nonNull(setter)) {
+                        setter.invoke(entity, value);
+                    }
+                    break;
                 }
-                break;
             }
         }
     }
 
     private void recordCreateTime(Object entity) throws Exception {
-        invokeWriteMethod(entity, CREATE_TIME_FIELD);
+        invokeWriteMethod(entity, CREATE_TIME_FIELD, new Date());
     }
 
     private void recordUpdateTime(Object entity) throws Exception {
-        invokeWriteMethod(entity, UPDATE_TIME_FIELD);
+        invokeWriteMethod(entity, UPDATE_TIME_FIELD, new Date());
     }
 }
