@@ -88,7 +88,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
             }
             return result;
         } catch (Exception e) {
-            LOGGER.error("json deserialize  fail!", e);
+            LOGGER.error("json deserialize fail!", e);
             return null;
         }
     }
