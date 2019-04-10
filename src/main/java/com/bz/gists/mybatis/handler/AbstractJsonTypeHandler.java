@@ -12,6 +12,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,6 +58,17 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return fromJson(callableStatement.getString(i));
     }
 
+    private Class<?> getType() {
+        return (Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    /**
+     * 如果转换的类型为泛型，则覆盖该方法并返回泛型类型
+     */
+    protected Class<?>[] getParametricType() {
+        return null;
+    }
+
     /**
      * 在 JSON 序列化之前对对象进行操作
      */
@@ -70,7 +82,8 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
     }
 
     private JavaType getJavaType() {
-        return objectMapper.getTypeFactory().constructType(getRawType());
+        Class<?>[] parametricType = getParametricType();
+        return Objects.nonNull(parametricType) && parametricType.length > 0 ? objectMapper.getTypeFactory().constructParametricType(getType(), parametricType) : objectMapper.getTypeFactory().constructType(getType());
     }
 
     private String toJson(T obj) {
