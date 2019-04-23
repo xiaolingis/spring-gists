@@ -11,6 +11,14 @@ public class StateResponse {
 
     private String message;
 
+    public static StateResponse ofSuccess() {
+        return new StateResponse().setState(State.SUCCESS.name());
+    }
+
+    public static StateResponse ofFail() {
+        return new StateResponse().setState(State.FAIL.name());
+    }
+
     public String getState() {
         return state;
     }
@@ -27,14 +35,6 @@ public class StateResponse {
     public StateResponse setMessage(String message) {
         this.message = message;
         return this;
-    }
-
-    public static StateResponse ofSuccess() {
-        return new StateResponse().setState(State.SUCCESS.name());
-    }
-
-    public static StateResponse ofFail() {
-        return new StateResponse().setState(State.FAIL.name());
     }
 
     enum State {

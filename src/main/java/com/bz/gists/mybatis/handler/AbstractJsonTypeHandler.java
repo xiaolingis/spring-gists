@@ -59,12 +59,29 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return fromJson(callableStatement.getString(i));
     }
 
-    private Class<?> getType() {
-        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getRawType();
+    private T fromJson(String json) {
+        try {
+            T result = null;
+            if (StringUtils.isNotBlank(json)) {
+                result = objectMapper.readValue(json, getJavaType());
+                afterFromJson(result);
+            }
+            return result;
+        } catch (Exception e) {
+            LOGGER.error("json deserialize fail!", e);
+            return null;
         }
-        return (Class<?>) type;
+    }
+
+    private JavaType getJavaType() {
+        Class<?>[] parametricType = getParametricType();
+        return Objects.nonNull(parametricType) && parametricType.length > 0 ? objectMapper.getTypeFactory().constructParametricType(getType(), parametricType) : objectMapper.getTypeFactory().constructType(getType());
+    }
+
+    /**
+     * 在 JSON 反序列化之后对对象进行操作
+     */
+    protected void afterFromJson(T obj) {
     }
 
     /**
@@ -74,21 +91,12 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return null;
     }
 
-    /**
-     * 在 JSON 序列化之前对对象进行操作
-     */
-    protected void beforeToJson(T obj) {
-    }
-
-    /**
-     * 在 JSON 反序列化之后对对象进行操作
-     */
-    protected void afterFromJson(T obj) {
-    }
-
-    private JavaType getJavaType() {
-        Class<?>[] parametricType = getParametricType();
-        return Objects.nonNull(parametricType) && parametricType.length > 0 ? objectMapper.getTypeFactory().constructParametricType(getType(), parametricType) : objectMapper.getTypeFactory().constructType(getType());
+    private Class<?> getType() {
+        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        return (Class<?>) type;
     }
 
     private String toJson(T obj) {
@@ -105,17 +113,9 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         }
     }
 
-    private T fromJson(String json) {
-        try {
-            T result = null;
-            if (StringUtils.isNotBlank(json)) {
-                result = objectMapper.readValue(json, getJavaType());
-                afterFromJson(result);
-            }
-            return result;
-        } catch (Exception e) {
-            LOGGER.error("json deserialize fail!", e);
-            return null;
-        }
+    /**
+     * 在 JSON 序列化之前对对象进行操作
+     */
+    protected void beforeToJson(T obj) {
     }
 }

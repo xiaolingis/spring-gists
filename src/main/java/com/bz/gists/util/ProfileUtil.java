@@ -30,16 +30,16 @@ public final class ProfileUtil {
         return StringUtils.isNotBlank(applicationName) ? applicationName : "spring-boot-application";
     }
 
-    public static int getServerPort() {
-        String serverPort = env.getProperty("server.port");
-        return Objects.nonNull(serverPort) ? Integer.valueOf(serverPort) : 8080;
-    }
-
     public static String getHostAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
             return "UnknownHost";
         }
+    }
+
+    public static int getServerPort() {
+        String serverPort = env.getProperty("server.port");
+        return Objects.nonNull(serverPort) ? Integer.valueOf(serverPort) : 8080;
     }
 }

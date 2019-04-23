@@ -66,6 +66,14 @@ public class AuditingInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
     }
 
+    private void recordCreateTime(Object entity) throws Exception {
+        invokeWriteMethod(entity, CREATE_TIME_FIELD, new Date());
+    }
+
+    private void recordUpdateTime(Object entity) throws Exception {
+        invokeWriteMethod(entity, UPDATE_TIME_FIELD, new Date());
+    }
+
     private void invokeWriteMethod(Object entity, String fieldName, Object value) throws Exception {
         BeanInfo beanInfo = Introspector.getBeanInfo(entity.getClass());
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
@@ -77,13 +85,5 @@ public class AuditingInterceptor implements Interceptor {
                 break;
             }
         }
-    }
-
-    private void recordCreateTime(Object entity) throws Exception {
-        invokeWriteMethod(entity, CREATE_TIME_FIELD, new Date());
-    }
-
-    private void recordUpdateTime(Object entity) throws Exception {
-        invokeWriteMethod(entity, UPDATE_TIME_FIELD, new Date());
     }
 }
