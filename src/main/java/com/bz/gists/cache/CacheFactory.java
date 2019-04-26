@@ -1,4 +1,4 @@
-package com.bz.gists.manager.cache;
+package com.bz.gists.cache;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +23,11 @@ public final class CacheFactory {
             new BasicThreadFactory.Builder().namingPattern("cache-refresh-scheduler-%d").build());
 
     @Autowired
-    private List<Cache> caches;
+    private List<ICache> caches;
 
     @PostConstruct
     public void init() {
-        caches.sort(Comparator.comparingInt(Cache::order));
+        caches.sort(Comparator.comparingInt(ICache::order));
         caches.forEach(cache -> scheduler.scheduleWithFixedDelay(cache::refresh, 0, cache.effectiveTime(), TimeUnit.SECONDS));
     }
 }
