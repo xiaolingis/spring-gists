@@ -7,32 +7,36 @@ package com.bz.gists.domain.response;
  */
 public class StateResponse {
 
-    private String state = State.SUCCESS.name();
+    private String state;
 
     private String message;
 
     public static StateResponse ofSuccess() {
-        return new StateResponse().setState(State.SUCCESS.name());
+        return StateResponse.of(State.SUCCESS);
+    }
+
+    public static StateResponse of(State state) {
+        return new StateResponse().withState(state);
+    }
+
+    public StateResponse withState(State state) {
+        this.state = state.name();
+        return this;
     }
 
     public static StateResponse ofFail() {
-        return new StateResponse().setState(State.FAIL.name());
+        return StateResponse.of(State.FAIL);
     }
 
     public String getState() {
         return state;
     }
 
-    public StateResponse setState(String state) {
-        this.state = state;
-        return this;
-    }
-
     public String getMessage() {
         return message;
     }
 
-    public StateResponse setMessage(String message) {
+    public StateResponse withMessage(String message) {
         this.message = message;
         return this;
     }

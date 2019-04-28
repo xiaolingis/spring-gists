@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = ForbiddenException.class)
     public ResponseEntity<Object> forbiddenExceptionHandler(Exception ex) {
         LOGGER.debug("forbidden exception!", ex);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(StateResponse.ofFail().setMessage(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(StateResponse.ofFail().withMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(value = {
@@ -50,13 +50,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     })
     public ResponseEntity<Object> invalidParameterExceptionHandler(Exception ex) {
         LOGGER.debug("invalid parameter exception!", ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StateResponse.ofFail().setMessage(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StateResponse.ofFail().withMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(value = NotFoundException.class)
     public ResponseEntity<Object> notFoundExceptionExceptionHandler(Exception ex) {
         LOGGER.debug("not found exception!", ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StateResponse.ofFail().setMessage(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StateResponse.ofFail().withMessage(ex.getMessage()));
     }
 
     /**
@@ -71,9 +71,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ex);
         ResponseEntity<Object> responseEntity;
         if (ex instanceof UnexpectedException) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StateResponse.ofFail().setMessage(ex.getMessage()));
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StateResponse.ofFail().withMessage(ex.getMessage()));
         } else {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StateResponse.ofFail().setMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StateResponse.ofFail().withMessage(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
         }
 
         return responseEntity;
@@ -91,12 +91,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
                         .collect(Collectors.toList())
         );
-        return handleExceptionInternal(ex, StateResponse.ofFail().setMessage(message), headers, status, request);
+        return handleExceptionInternal(ex, StateResponse.ofFail().withMessage(message), headers, status, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        body = Optional.ofNullable(body).orElse(StateResponse.ofFail().setMessage(status.getReasonPhrase()));
+        body = Optional.ofNullable(body).orElse(StateResponse.ofFail().withMessage(status.getReasonPhrase()));
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 }
