@@ -36,16 +36,4 @@ public class StateResponse {
         this.message = message;
         return this;
     }
-
-    enum State {
-        /**
-         * 成功
-         */
-        SUCCESS,
-
-        /**
-         * 失败
-         */
-        FAIL
-    }
 }
