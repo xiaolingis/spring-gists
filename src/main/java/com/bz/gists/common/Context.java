@@ -14,20 +14,20 @@ public final class Context {
     private Context(){
     }
 
-    private static final Context INSTANCE = new Context();
+    private static Context instance = new Context();
 
     private final TransmittableThreadLocal<String> userIdThreadLocal = new TransmittableThreadLocal<>();
 
     public static String getUserId() {
-        return INSTANCE.userIdThreadLocal.get();
+        return instance.userIdThreadLocal.get();
     }
 
     public static void setUserId(String userId) {
-        INSTANCE.userIdThreadLocal.set(userId);
+        instance.userIdThreadLocal.set(userId);
     }
 
     public static void clear() {
-        INSTANCE.userIdThreadLocal.remove();
+        instance.userIdThreadLocal.remove();
     }
 
 }
