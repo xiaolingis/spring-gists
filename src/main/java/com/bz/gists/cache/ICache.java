@@ -1,13 +1,15 @@
-package com.bz.gists.manager.cache;
+package com.bz.gists.cache;
 
 import java.time.Duration;
 
 /**
  * Created on 2019/4/26
  *
+ * 本地缓存，尽量只实现于提供数据的功能。
+ *
  * @author zhongyongbin
  */
-public interface Cache {
+public interface ICache {
     /**
      * 是否需要定时刷新
      *
@@ -35,7 +37,7 @@ public interface Cache {
     int order();
 
     /**
-     * 缓存有效时间，失效后将根据 {@link Cache#refreshNeeded()} 来决定是否调用刷新方法 {@link Cache#refresh()}
+     * 缓存有效时间，失效后将根据 {@link ICache#refreshNeeded()} 来决定是否调用刷新方法 {@link ICache#refresh()}
      *
      * @return 有效时间，单位为秒
      */

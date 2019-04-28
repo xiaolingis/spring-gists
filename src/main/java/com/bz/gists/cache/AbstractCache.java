@@ -1,10 +1,10 @@
-package com.bz.gists.manager.cache;
+package com.bz.gists.cache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
-public abstract class AbstractCache implements Cache {
+public abstract class AbstractCache implements ICache {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCache.class);
 
