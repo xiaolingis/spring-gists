@@ -1,0 +1,65 @@
+# 日志配置
+logging:
+  path: /data/logs/@project.artifactId@
+  file: /data/logs/@project.artifactId@/@project.artifactId@.log
+
+# 服务器配置
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+  http2:
+    enabled: true
+  tomcat:
+    accept-count: 100000
+    max-connections: 6000
+    max-threads: 2000
+    min-spare-threads: 150
+    remote-ip-header: X-Real-IP
+    accesslog:
+      enabled: true
+      rotate: true
+      file-date-format: .yyyy-MM-dd-HH
+      directory: /data/logs/@project.artifactId@
+      pattern: '%t %{X-Real-IP}i %h %l %u %r %s %b -- %D'
+      suffix: ''
+  port: 8088
+
+# actuator 配置
+info:
+  app:
+    name: '@project.name@'
+    version: '@project.version@'
+    description: '@project.description@'
+    encoding: '@project.build.sourceEncoding@'
+    java:
+      source: '@java.version@'
+      target: '@java.version@'
+
+# spring 配置
+spring:
+  profiles:
+    active: '@profiles.active@'
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+  jackson:
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    serialization:
+      WRITE_ENUMS_USING_INDEX: true
+      WRITE_DATES_AS_TIMESTAMPS: true
+    default-property-inclusion: NON_NULL
+    property-naming-strategy: CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES
+  application:
+    name: '@project.artifactId@'
+
+# mybatis 配置
+mybatis:
+  mapper-locations:
+    - classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+  type-handlers-package: com.bz.gists.mybatis.handler
