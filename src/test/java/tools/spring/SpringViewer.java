@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -35,6 +36,8 @@ public final class SpringViewer {
 
     private static final String CONFIGURATION_PROPERTIES_VIEW_FILE = "configuration-properties-view.properties";
 
+    private static final String VALUE_VIEW_FILE = "value-view.properties";
+
     private static final String MESSAGE_FORMAT = "%s=%s";
 
     @Autowired
@@ -42,39 +45,16 @@ public final class SpringViewer {
 
     @Test
     public void lookupAllBeans() throws Exception {
-        File path = new File(FILE_PATH);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        File viewFile = new File(FILE_PATH + "/" + BEAN_VIEW_FILE);
-        if (!viewFile.createNewFile()) {
-            viewFile.delete();
-            viewFile.createNewFile();
-        }
         List<String> message = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             String[] beanNameData = beanName.split("\\.");
             message.add(String.format(MESSAGE_FORMAT, beanNameData[beanNameData.length - 1], applicationContext.getBean(beanName).getClass().getCanonicalName()));
         });
-        FileWriter fileWriter = new FileWriter(viewFile);
-        for (String s : message) {
-            fileWriter.append(s);
-            fileWriter.append(System.lineSeparator());
-        }
-        fileWriter.flush();
+        writeView(BEAN_VIEW_FILE, message);
     }
 
     @Test
     public void lookupAllConfigurationProperties() throws Exception {
-        File path = new File(CONFIGURATION_PROPERTIES_VIEW_FILE);
-        if (!path.exists()) {
-            path.mkdirs();
-        }
-        File viewFile = new File(FILE_PATH + "/" + CONFIGURATION_PROPERTIES_VIEW_FILE);
-        if (!viewFile.createNewFile()) {
-            viewFile.delete();
-            viewFile.createNewFile();
-        }
         List<String> message = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             Object bean = applicationContext.getBean(beanName);
@@ -86,11 +66,42 @@ public final class SpringViewer {
             }
         });
 
+        writeView(CONFIGURATION_PROPERTIES_VIEW_FILE, message);
+    }
+
+    @Test
+    public void lookupAllValue() throws Exception {
+        List<String> message = new ArrayList<>();
+        Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
+            Object bean = applicationContext.getBean(beanName);
+            Arrays.stream(bean.getClass().getFields()).forEach(field -> {
+                if (field.isAnnotationPresent(Value.class)) {
+                    Value value = field.getAnnotation(Value.class);
+                    message.add(String.format(MESSAGE_FORMAT, value.value(), bean.getClass().getCanonicalName()));
+                }
+            });
+        });
+
+        writeView(VALUE_VIEW_FILE, message);
+    }
+
+    private void writeView(String fileName, List<String> message) throws Exception {
+        File path = new File(FILE_PATH);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        File viewFile = new File(path, fileName);
+        if (!viewFile.createNewFile()) {
+            viewFile.delete();
+            viewFile.createNewFile();
+        }
+
         FileWriter fileWriter = new FileWriter(viewFile);
         for (String s : message) {
             fileWriter.append(s);
             fileWriter.append(System.lineSeparator());
         }
+
         fileWriter.flush();
     }
 }
