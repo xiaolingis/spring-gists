@@ -48,8 +48,12 @@ public final class SpringViewer {
     public void lookupAllBeans() throws Exception {
         List<String> message = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
-            String[] beanNameData = beanName.split("\\.");
-            message.add(String.format(MESSAGE_FORMAT, beanNameData[beanNameData.length - 1], applicationContext.getBean(beanName).getClass().getCanonicalName()));
+            String name = beanName;
+            if (StringUtils.contains(beanName, ".")) {
+                String[] beanNameData = beanName.split("\\.");
+                name = "." + beanNameData[beanNameData.length - 1];
+            }
+            message.add(String.format(MESSAGE_FORMAT, name, applicationContext.getBean(beanName).getClass().getCanonicalName()));
         });
         writeView(BEAN_VIEW_FILE, message);
     }
