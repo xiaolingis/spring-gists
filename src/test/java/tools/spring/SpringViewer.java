@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -86,6 +87,9 @@ public final class SpringViewer {
     }
 
     private void writeView(String fileName, List<String> message) throws Exception {
+        if (CollectionUtils.isEmpty(message)) {
+            return;
+        }
         File path = new File(FILE_PATH);
         if (!path.exists()) {
             path.mkdirs();
