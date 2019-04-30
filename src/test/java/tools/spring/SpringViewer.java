@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -46,48 +48,51 @@ public final class SpringViewer {
 
     @Test
     public void lookupAllBeans() throws Exception {
-        List<String> message = new ArrayList<>();
+        Map<String, String> messageMap = new TreeMap<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             String name = beanName;
+            String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
             if (StringUtils.contains(beanName, ".")) {
                 String[] beanNameData = beanName.split("\\.");
                 name = "." + beanNameData[beanNameData.length - 1];
             }
-            message.add(String.format(MESSAGE_FORMAT, name, applicationContext.getBean(beanName).getClass().getCanonicalName()));
+            messageMap.put(typeName, String.format(MESSAGE_FORMAT, name, typeName));
         });
-        writeView(BEAN_VIEW_FILE, message);
+        writeView(BEAN_VIEW_FILE, new ArrayList<>(messageMap.values()));
     }
 
     @Test
     public void lookupAllConfigurationProperties() throws Exception {
-        List<String> message = new ArrayList<>();
+        Map<String, String> messageMap = new TreeMap<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             Object bean = applicationContext.getBean(beanName);
+            String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
             if (bean.getClass().isAnnotationPresent(ConfigurationProperties.class)) {
                 ConfigurationProperties configurationProperties = bean.getClass().getAnnotation(ConfigurationProperties.class);
                 String prefix = configurationProperties.prefix();
                 prefix = StringUtils.isNotBlank(prefix) ? prefix : configurationProperties.value();
-                message.add(String.format(MESSAGE_FORMAT, prefix, bean.getClass().getCanonicalName()));
+                messageMap.put(typeName, String.format(MESSAGE_FORMAT, prefix, typeName));
             }
         });
 
-        writeView(CONFIGURATION_PROPERTIES_VIEW_FILE, message);
+        writeView(CONFIGURATION_PROPERTIES_VIEW_FILE, new ArrayList<>(messageMap.values()));
     }
 
     @Test
     public void lookupAllValue() throws Exception {
-        List<String> message = new ArrayList<>();
+        Map<String, String> messageMap = new TreeMap<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             Object bean = applicationContext.getBean(beanName);
+            String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
             Arrays.stream(bean.getClass().getFields()).forEach(field -> {
                 if (field.isAnnotationPresent(Value.class)) {
                     Value value = field.getAnnotation(Value.class);
-                    message.add(String.format(MESSAGE_FORMAT, value.value(), bean.getClass().getCanonicalName()));
+                    messageMap.put(typeName, String.format(MESSAGE_FORMAT, value, typeName));
                 }
             });
         });
 
-        writeView(VALUE_VIEW_FILE, message);
+        writeView(VALUE_VIEW_FILE, new ArrayList<>(messageMap.values()));
     }
 
     private void writeView(String fileName, List<String> message) throws Exception {
