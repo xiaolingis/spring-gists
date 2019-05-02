@@ -3,6 +3,13 @@ package tools.spring;
 import com.bz.gists.Application;
 
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +23,13 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -41,6 +50,8 @@ public final class SpringViewer {
 
     private static final String VALUE_VIEW_FILE = "value-view.properties";
 
+    private static final String AOP_VIEW_FILE = "aop-view.properties";
+
     private static final String MESSAGE_FORMAT = "%s=%s";
 
     @Autowired
@@ -48,7 +59,7 @@ public final class SpringViewer {
 
     @Test
     public void lookupAllBeans() throws Exception {
-        Map<String, String> messageMap = new TreeMap<>();
+        ArrayList<Message> messages = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             String name = beanName;
             String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
@@ -56,14 +67,19 @@ public final class SpringViewer {
                 String[] beanNameData = beanName.split("\\.");
                 name = "." + beanNameData[beanNameData.length - 1];
             }
-            messageMap.put(typeName, String.format(MESSAGE_FORMAT, name, typeName));
+            Message message = new Message();
+            message.key = typeName;
+            message.value = String.format(MESSAGE_FORMAT, name, typeName);
+            messages.add(message);
         });
-        writeView(BEAN_VIEW_FILE, new ArrayList<>(messageMap.values()));
+        messages.sort(Comparator.comparing(message -> message.key));
+        writeView(BEAN_VIEW_FILE, messages.stream()
+                .map(message -> message.value).collect(Collectors.toList()));
     }
 
     @Test
     public void lookupAllConfigurationProperties() throws Exception {
-        Map<String, String> messageMap = new TreeMap<>();
+        ArrayList<Message> messages = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             Object bean = applicationContext.getBean(beanName);
             String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
@@ -71,28 +87,62 @@ public final class SpringViewer {
                 ConfigurationProperties configurationProperties = bean.getClass().getAnnotation(ConfigurationProperties.class);
                 String prefix = configurationProperties.prefix();
                 prefix = StringUtils.isNotBlank(prefix) ? prefix : configurationProperties.value();
-                messageMap.put(typeName, String.format(MESSAGE_FORMAT, prefix, typeName));
+                Message message = new Message();
+                message.key = prefix;
+                message.value = String.format(MESSAGE_FORMAT, prefix, typeName);
+                messages.add(message);
             }
         });
-
-        writeView(CONFIGURATION_PROPERTIES_VIEW_FILE, new ArrayList<>(messageMap.values()));
+        messages.sort(Comparator.comparing(message -> message.key));
+        writeView(CONFIGURATION_PROPERTIES_VIEW_FILE, messages.stream()
+                .map(message -> message.value).collect(Collectors.toList()));
     }
 
     @Test
     public void lookupAllValue() throws Exception {
-        Map<String, String> messageMap = new TreeMap<>();
+        ArrayList<Message> messages = new ArrayList<>();
         Arrays.stream(applicationContext.getBeanDefinitionNames()).forEach(beanName -> {
             Object bean = applicationContext.getBean(beanName);
             String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
             Arrays.stream(bean.getClass().getFields()).forEach(field -> {
                 if (field.isAnnotationPresent(Value.class)) {
                     Value value = field.getAnnotation(Value.class);
-                    messageMap.put(typeName, String.format(MESSAGE_FORMAT, value, typeName));
+                    Message message = new Message();
+                    message.key = value.value();
+                    message.value = String.format(MESSAGE_FORMAT, value.value(), typeName);
+                    messages.add(message);
                 }
             });
         });
+        messages.sort(Comparator.comparing(message -> message.key));
+        writeView(VALUE_VIEW_FILE, messages.stream()
+                .map(message -> message.value).collect(Collectors.toList()));
+    }
 
-        writeView(VALUE_VIEW_FILE, new ArrayList<>(messageMap.values()));
+    @SuppressWarnings("unchecked")
+    @Test
+    public void lookupAop() throws Exception {
+        Class[] aops = {After.class, AfterReturning.class, AfterThrowing.class, Around.class, Aspect.class, Before.class, Pointcut.class};
+        ArrayList<Message> messages = new ArrayList<>();
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            Object bean = applicationContext.getBean(beanName);
+            String typeName = applicationContext.getBean(beanName).getClass().getTypeName();
+            for (Method method : bean.getClass().getMethods()) {
+                for (Class<? extends Annotation> aop : aops) {
+                    if (method.isAnnotationPresent(aop)) {
+                        Annotation annotation = method.getAnnotation(aop);
+                        Message message = new Message();
+                        message.key = typeName;
+                        message.value = String.format(MESSAGE_FORMAT,
+                                aop.getSimpleName() + "#" + aop.getMethod("value").invoke(annotation), typeName);
+                        messages.add(message);
+                    }
+                }
+            }
+        }
+        messages.sort(Comparator.comparing(message -> message.key));
+        writeView(AOP_VIEW_FILE, messages.stream()
+                .map(message -> message.value).collect(Collectors.toList()));
     }
 
     private void writeView(String fileName, List<String> message) throws Exception {
@@ -116,5 +166,10 @@ public final class SpringViewer {
         }
 
         fileWriter.flush();
+    }
+
+    class Message {
+        String key;
+        String value;
     }
 }
