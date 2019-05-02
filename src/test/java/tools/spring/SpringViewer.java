@@ -57,6 +57,9 @@ public final class SpringViewer {
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * 查看容器中所有的 Bean
+     */
     @Test
     public void lookupAllBeans() throws Exception {
         ArrayList<Message> messages = new ArrayList<>();
@@ -77,6 +80,9 @@ public final class SpringViewer {
                 .map(message -> message.value).collect(Collectors.toList()));
     }
 
+    /**
+     * 查看容器中所有的 {@link ConfigurationProperties}
+     */
     @Test
     public void lookupAllConfigurationProperties() throws Exception {
         ArrayList<Message> messages = new ArrayList<>();
@@ -98,6 +104,10 @@ public final class SpringViewer {
                 .map(message -> message.value).collect(Collectors.toList()));
     }
 
+    /**
+     * 查看容器中所有用到的 {@link Value}
+     * @throws Exception
+     */
     @Test
     public void lookupAllValue() throws Exception {
         ArrayList<Message> messages = new ArrayList<>();
@@ -119,9 +129,13 @@ public final class SpringViewer {
                 .map(message -> message.value).collect(Collectors.toList()));
     }
 
+    /**
+     * 查看容器中所有定义的切面
+     * @throws Exception
+     */
     @SuppressWarnings("unchecked")
     @Test
-    public void lookupAop() throws Exception {
+    public void lookupAllAop() throws Exception {
         Class[] aops = {After.class, AfterReturning.class, AfterThrowing.class, Around.class, Aspect.class, Before.class, Pointcut.class};
         ArrayList<Message> messages = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
