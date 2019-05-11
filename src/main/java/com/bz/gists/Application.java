@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
-@SpringBootApplication
+@SpringBootApplication(exclude = {JmxAutoConfiguration.class})
 public class Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
