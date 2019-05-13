@@ -55,7 +55,7 @@ public final class ValidatorUtil {
      * @param <T>    校验对象类型
      * @return 通常调用 {@link ValidateResult#checkValidateResult()} 进行处理校验异常
      */
-    public <T> ValidateResult<Void> validate(T target, Runnable task) {
+    public static <T> ValidateResult<Void> validate(T target, Runnable task) {
         ValidateResult<Void> result = new ValidateResult<>();
         Optional<ConstraintViolationException> exceptionOptional = generateViolationException(target);
         if (exceptionOptional.isPresent()) {
