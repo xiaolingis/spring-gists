@@ -5,30 +5,41 @@ package com.bz.gists.domain.response;
  *
  * @author zhongyongbin
  */
-public class StateResponse {
+public class StateResponse<T> {
 
-    private String state;
+    private State state;
 
     private String message;
 
-    public static StateResponse ofSuccess() {
-        return StateResponse.of(State.SUCCESS);
+    private T data;
+
+    private StateResponse(State state) {
+        this.state = state;
     }
 
-    public static StateResponse of(State state) {
-        return new StateResponse().withState(state);
+    public static <T> StateResponse<T> ofSuccess() {
+        return new StateResponse<>(State.SUCCESS);
     }
 
-    public StateResponse withState(State state) {
-        this.state = state.name();
+    public static <T> StateResponse<T> ofFail() {
+        return new StateResponse<>(State.FAIL);
+    }
+
+    public static <T> StateResponse<T> of(State state) {
+        return new StateResponse<>(state);
+    }
+
+    public StateResponse<T> withMessage(String message) {
+        this.message = message;
         return this;
     }
 
-    public static StateResponse ofFail() {
-        return StateResponse.of(State.FAIL);
+    public StateResponse<T> withData(T data) {
+        this.data = data;
+        return this;
     }
 
-    public String getState() {
+    public State getState() {
         return state;
     }
 
@@ -36,8 +47,7 @@ public class StateResponse {
         return message;
     }
 
-    public StateResponse withMessage(String message) {
-        this.message = message;
-        return this;
+    public T getData() {
+        return data;
     }
 }
