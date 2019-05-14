@@ -1,17 +1,17 @@
 package com.bz.gists.util;
 
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created on 2019/1/19
@@ -36,16 +36,16 @@ public final class ProfileUtil {
         return StringUtils.isNotBlank(applicationName) ? applicationName : "spring-boot-application";
     }
 
-    public static String getHostAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            return "UnknownHost";
-        }
+    public static String[] getHostNames() throws SocketException {
+        return Arrays.stream(getInetAddresses()).map(InetAddress::getHostName).collect(Collectors.toList()).toArray(new String[]{});
     }
 
     public static String[] getHostAddresses() throws SocketException {
-        List<String> ips = Lists.newArrayList();
+        return Arrays.stream(getInetAddresses()).map(InetAddress::getHostAddress).collect(Collectors.toList()).toArray(new String[]{});
+    }
+
+    private static InetAddress[] getInetAddresses() throws SocketException {
+        List<InetAddress> inetAddresses = new ArrayList<>();
         Collections.list(NetworkInterface.getNetworkInterfaces())
                 .stream()
                 .filter(networkInterface -> !networkInterface.isVirtual())
@@ -73,8 +73,8 @@ public final class ProfileUtil {
                 .forEach(networkInterface -> Collections.list(networkInterface.getInetAddresses())
                         .stream()
                         .filter(address -> address.getAddress().length == 4)
-                        .forEach(address -> ips.add(address.getHostAddress())));
-        return ips.toArray(new String[]{});
+                        .forEach(inetAddresses::add));
+        return inetAddresses.toArray(new InetAddress[]{});
     }
 
     public static int getServerPort() {
