@@ -7,26 +7,21 @@ package com.bz.gists.domain.response;
  */
 public class StateResponse {
 
-    private State state;
+    private String state = State.SUCCESS.name();
 
     private String message;
 
-    private AbstractResponseEntity data;
-
-    private StateResponse(State state) {
-        this.state = state;
-    }
-
     public static StateResponse ofSuccess() {
-        return of(State.SUCCESS);
+        return new StateResponse().withState(State.SUCCESS.name());
     }
 
-    public static StateResponse of(State state) {
-        return new StateResponse(state);
+    public StateResponse withState(String state) {
+        this.state = state;
+        return this;
     }
 
     public static StateResponse ofFail() {
-        return of(State.FAIL);
+        return new StateResponse().withState(State.FAIL.name());
     }
 
     public StateResponse withMessage(String message) {
@@ -34,20 +29,11 @@ public class StateResponse {
         return this;
     }
 
-    public StateResponse withData(AbstractResponseEntity data) {
-        this.data = data;
-        return this;
-    }
-
-    public State getState() {
+    public String getState() {
         return state;
     }
 
     public String getMessage() {
         return message;
-    }
-
-    public AbstractResponseEntity getData() {
-        return data;
     }
 }
