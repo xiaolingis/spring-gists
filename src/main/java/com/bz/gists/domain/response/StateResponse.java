@@ -5,36 +5,36 @@ package com.bz.gists.domain.response;
  *
  * @author zhongyongbin
  */
-public class StateResponse<T> {
+public class StateResponse {
 
     private State state;
 
     private String message;
 
-    private T data;
+    private AbstractResponseEntity data;
 
     private StateResponse(State state) {
         this.state = state;
     }
 
-    public static <T> StateResponse<T> ofSuccess() {
-        return new StateResponse<>(State.SUCCESS);
+    public static StateResponse ofSuccess() {
+        return of(State.SUCCESS);
     }
 
-    public static <T> StateResponse<T> ofFail() {
-        return new StateResponse<>(State.FAIL);
+    public static StateResponse of(State state) {
+        return new StateResponse(state);
     }
 
-    public static <T> StateResponse<T> of(State state) {
-        return new StateResponse<>(state);
+    public static StateResponse ofFail() {
+        return of(State.FAIL);
     }
 
-    public StateResponse<T> withMessage(String message) {
+    public StateResponse withMessage(String message) {
         this.message = message;
         return this;
     }
 
-    public StateResponse<T> withData(T data) {
+    public StateResponse withData(AbstractResponseEntity data) {
         this.data = data;
         return this;
     }
@@ -47,7 +47,7 @@ public class StateResponse<T> {
         return message;
     }
 
-    public T getData() {
+    public AbstractResponseEntity getData() {
         return data;
     }
 }
