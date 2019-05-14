@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author zhongyongbin
  */
 @EnableAsync
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 @SpringBootApplication(exclude = {JmxAutoConfiguration.class})
 public class Application {
 
