@@ -34,17 +34,27 @@ public class Application {
     private static void log() throws Exception {
         StringBuilder log = new StringBuilder();
         log.append("\n----------------------------------------------------------\n\t");
-        log.append("Running with spring profile : {}\n\t");
+        log.append("Running with spring profile: {}\n\t");
         log.append("Application '{}' is running! Access URLs:\n\t");
         log.append("Local: \t\thttp://127.0.0.1:{}\n\t");
-        log.append("External: \thttp://{}:{}");
+        log.append("External: \t{}");
         log.append("\n----------------------------------------------------------");
 
+        StringBuilder externalAddress = new StringBuilder();
+        String[] hostAddresses = ProfileUtil.getHostAddresses();
+        for (int i = 0; i < hostAddresses.length; i++) {
+            if (i != 0) {
+                externalAddress.append("            ");
+            }
+            externalAddress.append(String.format("http://%s:%s", hostAddresses[i], ProfileUtil.getServerPort()));
+            if (i != hostAddresses.length - 1) {
+                externalAddress.append("\n\t");
+            }
+        }
         LOGGER.info(log.toString(),
                 ProfileUtil.getActiveProfile(),
                 ProfileUtil.getApplicationName(),
                 ProfileUtil.getServerPort(),
-                ProfileUtil.getHostAddress(),
-                ProfileUtil.getServerPort());
+                externalAddress.toString());
     }
 }
