@@ -3,7 +3,7 @@ package com.bz.gists.exception;
 /**
  * Created on 2019/4/26
  *
- * 用于包装数据库操作时的异常进行事务回滚
+ * 用于包装数据库操作异常，用于事务回滚
  *
  * @author zhongyongbin
  */

@@ -3,6 +3,8 @@ package com.bz.gists.domain.response;
 /**
  * Created on 2019/1/19
  *
+ * 响应实体，所有接口都必须返回该实体类或其子类
+ *
  * @author zhongyongbin
  */
 public class StateResponse {
