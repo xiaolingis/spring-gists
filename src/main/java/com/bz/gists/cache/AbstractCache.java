@@ -14,11 +14,11 @@ public abstract class AbstractCache implements ICache {
 
     private int order;
 
-    AbstractCache(String cacheName) {
+    public AbstractCache(String cacheName) {
         this(cacheName, Integer.MAX_VALUE);
     }
 
-    AbstractCache(String cacheName, int order) {
+    public AbstractCache(String cacheName, int order) {
         this.cacheName = cacheName;
         this.order = order;
     }
