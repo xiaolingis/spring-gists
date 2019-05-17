@@ -20,14 +20,12 @@ public interface ICache {
     /**
      * 缓存刷新
      */
-    default void refresh() {
-        this.load();
-    }
+    void refresh();
 
     /**
      * 缓存加载
      */
-    void load();
+    void load() throws Exception;
 
     /**
      * 缓存启动刷新顺序

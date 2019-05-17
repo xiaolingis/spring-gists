@@ -37,16 +37,20 @@ public abstract class AbstractCache implements ICache {
 
     @Override
     public void refresh() {
-        if (refreshNeeded()) {
-            StopWatch watch = new StopWatch();
-            LOGGER.info("start to refresh cache {}", cacheName);
-            watch.start();
-            load();
-            watch.stop();
-            LOGGER.info("end to refresh cache {} , eclipsed time {} s", cacheName, watch.getTotalTimeSeconds());
-            return;
+        try {
+            if (refreshNeeded()) {
+                StopWatch watch = new StopWatch();
+                LOGGER.info("start to refresh cache {}", cacheName);
+                watch.start();
+                load();
+                watch.stop();
+                LOGGER.info("end to refresh cache {} , eclipsed time {} s", cacheName, watch.getTotalTimeSeconds());
+                return;
+            }
+            LOGGER.info("no need to refresh cache {}", cacheName);
+        } catch (Exception e) {
+            LOGGER.error("occur error while refresh cache {}. stacktrace:", cacheName, e);
         }
-        LOGGER.info("no need to refresh cache {}", cacheName);
     }
 
     @Override
