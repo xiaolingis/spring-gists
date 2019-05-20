@@ -16,14 +16,13 @@
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
 
-        <commentGenerator type="tk.mybatis.mapper.generator.MapperCommentGenerator"/>
-
         <!-- 数据库链接URL、用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/database"
                         userId="root"
                         password="root">
             <property name="useInformationSchema" value="true"/>
+            <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
         <!-- 生成模型的包名和位置 -->
@@ -43,9 +42,7 @@
                              type="XMLMAPPER"/>
 
         <!-- 数据库表 -->
-        <table tableName="t_user" domainObjectName="User">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
+        <table tableName="%"/>
     </context>
 
 </generatorConfiguration>
