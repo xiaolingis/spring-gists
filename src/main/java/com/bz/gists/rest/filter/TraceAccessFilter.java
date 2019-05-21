@@ -10,6 +10,7 @@ import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -53,7 +54,8 @@ public class TraceAccessFilter implements Filter {
             traceData.uri = httpRequest.getRequestURI();
             traceData.method = httpRequest.getMethod();
             traceData.requestParameter = httpRequest.getParameterMap();
-            traceData.requestBody = String.valueOf(httpRequest.getAttribute(RequestBodyAttributeAdvice.REQUEST_BODY_ATTRIBUTE_NAME));
+            Object body = httpRequest.getAttribute(RequestBodyAttributeAdvice.REQUEST_BODY_ATTRIBUTE_NAME);
+            traceData.requestBody = Objects.isNull(body) ? "" : String.valueOf(body);
             traceData.statusCode = httpResponse.getStatus();
 
             LogUtil.dataLog(ACCESS_LOGGER, traceData);
