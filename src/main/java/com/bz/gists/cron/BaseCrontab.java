@@ -1,12 +1,18 @@
 package com.bz.gists.cron;
 
-import com.bz.gists.util.JsonUtil;
 import com.bz.gists.util.LogUtil;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Objects;
 
 /**
  * Created on 2019/1/21
@@ -21,6 +27,9 @@ public abstract class BaseCrontab<T> {
 
     private static final Logger CRONTAB_DATA_LOGGER = LoggerFactory.getLogger("CRONTAB_DATA_LOGGER");
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     final void execute() {
         this.execute(null);
     }
@@ -29,7 +38,7 @@ public abstract class BaseCrontab<T> {
         long startTime = System.currentTimeMillis();
         try {
 
-            T parameterObject = StringUtils.isNotBlank(json) ? JsonUtil.fromJson(json, getParameterType()) : null;
+            T parameterObject = StringUtils.isNotBlank(json) ? objectMapper.readValue(json, getJavaType()) : null;
             CrontabResult result = this.executeInternal(parameterObject);
 
             LogUtil.dataLog(CRONTAB_DATA_LOGGER,
@@ -53,20 +62,40 @@ public abstract class BaseCrontab<T> {
     }
 
     /**
+     * 定时任务需要用到参数类型
+     */
+    protected Class<T> getParameterType() {
+        return null;
+    }
+
+    /**
      * 定时任务执行方法
      *
-     * @param parameterObject 任务执行参数，主要用于主动触发时传递参数。如果不会用到参数则无视。否则需要重写方法 {@link
-     *                        BaseCrontab#getParameterType()}
+     * @param parameterObject 任务执行参数，主要用于主动触发时传递参数。如果不会用到参数则无视。如果参数为泛型，实现方法 {@link
+     *                        BaseCrontab#getParametricType()} 返回泛型类型
      * @return true : 执行成功 ; false : 执行失败
      * @throws Exception 执行任务时可能抛出的异常
      */
     protected abstract CrontabResult executeInternal(T parameterObject) throws Exception;
 
+    private JavaType getJavaType() {
+        Class<?>[] parametricType = getParametricType();
+        return Objects.nonNull(parametricType) && parametricType.length > 0 ? objectMapper.getTypeFactory().constructParametricType(getType(), parametricType) : objectMapper.getTypeFactory().constructType(getType());
+    }
+
     /**
-     * 定时任务需要用到参数类型
+     * 如果参数类型为泛型，则覆盖该方法并返回泛型类型
      */
-    protected Class<T> getParameterType() {
+    protected Class<?>[] getParametricType() {
         return null;
+    }
+
+    private Class<?> getType() {
+        Type type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        if (type instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) type).getRawType();
+        }
+        return (Class<?>) type;
     }
 
     public static class CrontabResult {
@@ -77,19 +106,6 @@ public abstract class BaseCrontab<T> {
 
         public CrontabResult(CrontabStatus status) {
             this.status = status;
-        }
-
-        public CrontabResult setMessage(Object message) {
-            this.message = message;
-            return this;
-        }
-
-        public Object getMessage() {
-            return message;
-        }
-
-        public CrontabStatus getStatus() {
-            return status;
         }
 
         public static CrontabResult ofFail() {
@@ -103,20 +119,18 @@ public abstract class BaseCrontab<T> {
         public static CrontabResult ofException() {
             return new CrontabResult(CrontabStatus.EXCEPTION);
         }
-    }
 
-    enum CrontabStatus {
-        /**
-         * 执行成功
-         */
-        SUCCESS,
-        /**
-         * 执行失败
-         */
-        FAIL,
-        /**
-         * 发生异常
-         */
-        EXCEPTION
+        public Object getMessage() {
+            return message;
+        }
+
+        public CrontabResult setMessage(Object message) {
+            this.message = message;
+            return this;
+        }
+
+        public CrontabStatus getStatus() {
+            return status;
+        }
     }
 }
