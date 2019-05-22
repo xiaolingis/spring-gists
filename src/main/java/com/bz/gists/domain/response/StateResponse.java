@@ -14,16 +14,16 @@ public class StateResponse {
     private String message;
 
     public static StateResponse ofSuccess() {
-        return new StateResponse().withState(State.SUCCESS.name());
+        return new StateResponse().withState(State.SUCCESS);
     }
 
-    public StateResponse withState(String state) {
-        this.state = state;
+    public StateResponse withState(State state) {
+        this.state = state.name();
         return this;
     }
 
     public static StateResponse ofFail() {
-        return new StateResponse().withState(State.FAIL.name());
+        return new StateResponse().withState(State.FAIL);
     }
 
     public StateResponse withMessage(String message) {
