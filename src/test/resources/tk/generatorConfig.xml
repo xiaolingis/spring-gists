@@ -26,20 +26,9 @@
         </jdbcConnection>
 
         <!-- 生成模型的包名和位置 -->
-        <javaModelGenerator targetPackage="com.bz.gists.domain.entity"
+        <javaModelGenerator targetPackage="gists"
                             targetProject="generated-sources">
         </javaModelGenerator>
-
-        <!-- 生成的映射文件包名和位置 -->
-        <sqlMapGenerator targetPackage="com.bz.gists.mapper"
-                         targetProject="generated-sources/resources">
-            <property name="enableSubPackages" value="true"/>
-        </sqlMapGenerator>
-
-        <!--生成的映射几口包名和位置-->
-        <javaClientGenerator targetPackage="com.bz.gists.mapper"
-                             targetProject="generated-sources/java"
-                             type="XMLMAPPER"/>
 
         <!-- 数据库表 -->
         <table tableName="%"/>

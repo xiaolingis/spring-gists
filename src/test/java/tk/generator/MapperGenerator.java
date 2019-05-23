@@ -22,10 +22,9 @@ public final class MapperGenerator {
 
     private static final String GENERATED_SOURCES = "generated-sources";
 
-    private static final String RESOURCES = "resources";
 
     public static void main(String[] args) throws Exception {
-        new File(GENERATED_SOURCES + File.separator + RESOURCES).mkdirs();
+        new File(GENERATED_SOURCES).mkdirs();
 
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
