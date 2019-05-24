@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created on 2019/5/23
@@ -15,7 +16,7 @@ import java.util.Map;
  */
 public final class BeanMapUtil {
 
-    public static Map<String, Object> describeBeanExcludePrefix(Object bean, String... excludedProperties) {
+    public static Map<String, Object> describe(Object bean, String... excludedProperties) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
@@ -27,7 +28,7 @@ public final class BeanMapUtil {
         return map;
     }
 
-    public static Map<String, Object> describeBeanExcludePrefix(Object bean, String excludedPropertiesPrefix) {
+    public static Map<String, Object> describeExcludedPropertiesPrefix(Object bean, String excludedPropertiesPrefix) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
@@ -39,7 +40,7 @@ public final class BeanMapUtil {
         return map;
     }
 
-    public static Map<String, Object> describeBeanExcludeSuffix(Object bean, String excludedPropertiesSuffix) {
+    public static Map<String, Object> describeExcludedPropertiesSuffix(Object bean, String excludedPropertiesSuffix) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
@@ -52,8 +53,12 @@ public final class BeanMapUtil {
     }
 
     public static <T> T populate(Map<String, ?> beanMap, Class<T> type) throws ReflectiveOperationException {
-        T instance = type.newInstance();
-        BeanUtils.populate(instance, beanMap);
-        return instance;
+        if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
+            T instance = type.newInstance();
+            BeanUtils.populate(instance, beanMap);
+            return instance;
+        } else {
+            return null;
+        }
     }
 }
