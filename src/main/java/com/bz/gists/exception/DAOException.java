@@ -9,11 +9,15 @@ package com.bz.gists.exception;
  */
 public class DAOException extends RuntimeException {
 
+    public DAOException(Throwable ex) {
+        super(ex);
+    }
+
     public DAOException(String message) {
         super(message);
     }
 
-    public DAOException(final String message, Throwable ex) {
+    public DAOException(String message, Throwable ex) {
         super(message, ex);
     }
 
