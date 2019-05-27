@@ -2,6 +2,7 @@ package com.bz.gists.manager.cache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 import org.springframework.util.StopWatch;
 
 public abstract class AbstractCache implements ICache {
@@ -15,7 +16,7 @@ public abstract class AbstractCache implements ICache {
     private int order;
 
     public AbstractCache(String cacheName) {
-        this(cacheName, Integer.MAX_VALUE);
+        this(cacheName, Ordered.LOWEST_PRECEDENCE);
     }
 
     public AbstractCache(String cacheName, int order) {
@@ -54,7 +55,7 @@ public abstract class AbstractCache implements ICache {
     }
 
     @Override
-    public int order() {
+    public int getOrder() {
         return this.order;
     }
 }

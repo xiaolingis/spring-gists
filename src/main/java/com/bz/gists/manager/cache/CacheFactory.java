@@ -29,7 +29,7 @@ public final class CacheFactory {
     @PostConstruct
     public void init() {
         if (!CollectionUtils.isEmpty(caches)) {
-            caches.sort(Comparator.comparingInt(ICache::order));
+            caches.sort(Comparator.comparingInt(ICache::getOrder));
             caches.forEach(cache -> scheduler.scheduleWithFixedDelay(cache::refresh, 0, cache.effectiveTime(), TimeUnit.SECONDS));
         }
     }

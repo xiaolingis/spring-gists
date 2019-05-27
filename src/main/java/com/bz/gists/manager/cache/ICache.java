@@ -1,5 +1,7 @@
 package com.bz.gists.manager.cache;
 
+import org.springframework.core.Ordered;
+
 import java.time.Duration;
 
 /**
@@ -9,7 +11,7 @@ import java.time.Duration;
  *
  * @author zhongyongbin
  */
-public interface ICache {
+public interface ICache extends Ordered {
     /**
      * 是否需要定时刷新
      *
@@ -26,13 +28,6 @@ public interface ICache {
      * 缓存加载
      */
     void load() throws Exception;
-
-    /**
-     * 缓存启动刷新顺序
-     *
-     * @return 序号，序号越小，越先刷新
-     */
-    int order();
 
     /**
      * 缓存有效时间，失效后将根据 {@link ICache#refreshNeeded()} 来决定是否调用刷新方法 {@link ICache#refresh()}
