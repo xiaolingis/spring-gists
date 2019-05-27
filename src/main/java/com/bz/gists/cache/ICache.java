@@ -1,4 +1,4 @@
-package com.bz.gists.manager.cache;
+package com.bz.gists.cache;
 
 import org.springframework.core.Ordered;
 
