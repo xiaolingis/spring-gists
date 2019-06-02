@@ -4,27 +4,18 @@ import com.bz.gists.exception.UnexpectedException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import java.util.Objects;
 
 /**
  * Created on 2019/1/19
  *
  * @author zhongyongbin
  */
-@Component
-public final class JsonUtil implements ApplicationContextAware {
+public final class JsonUtil {
 
     private static ObjectMapper objectMapper;
 
     private JsonUtil() {
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        JsonUtil.objectMapper = applicationContext.getBean(ObjectMapper.class);
     }
 
     /**
@@ -35,10 +26,18 @@ public final class JsonUtil implements ApplicationContextAware {
      */
     public static String toJson(Object obj) {
         try {
-            return objectMapper.writeValueAsString(obj);
+            return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             throw new UnexpectedException("json serialization error.", e);
         }
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        return Objects.requireNonNull(objectMapper, "objectMapper uninitialized");
+    }
+
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        JsonUtil.objectMapper = objectMapper;
     }
 
     /**
@@ -49,7 +48,7 @@ public final class JsonUtil implements ApplicationContextAware {
      */
     public static String toPrettyJson(Object obj) {
         try {
-            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            return getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         } catch (Exception e) {
             throw new UnexpectedException("json serialization error.", e);
         }
@@ -64,7 +63,7 @@ public final class JsonUtil implements ApplicationContextAware {
      */
     public static <T> T fromJson(String json, Class<T> clazz) {
         try {
-            return objectMapper.readValue(json, clazz);
+            return getObjectMapper().readValue(json, clazz);
         } catch (Exception e) {
             throw new UnexpectedException("json deserialization error.", e);
         }
@@ -80,9 +79,8 @@ public final class JsonUtil implements ApplicationContextAware {
      */
     public static <T> T fromJson(String json, Class<?> clazz, Class<?>... parameterClasses) {
         try {
-
-            JavaType javaType = objectMapper.getTypeFactory().constructParametricType(clazz, parameterClasses);
-            return objectMapper.readValue(json, javaType);
+            JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(clazz, parameterClasses);
+            return getObjectMapper().readValue(json, javaType);
         } catch (Exception e) {
 
             throw new UnexpectedException("json deserialization error.", e);

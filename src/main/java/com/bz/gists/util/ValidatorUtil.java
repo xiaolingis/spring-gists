@@ -22,7 +22,17 @@ public final class ValidatorUtil {
 
     private static final String SEPARATOR = ",";
 
-    private static Validator validator = SpringUtil.getBean(Validator.class);
+    private static Validator validator;
+
+    /**
+     * 校验参数，校验不通过将抛出校验错误异常
+     *
+     * @param target 校验对象
+     * @param <T>    校验对象类型
+     */
+    public static <T> void validateAndCheck(T target) {
+        validate(target).checkValidateResult();
+    }
 
     /**
      * 校验参数
@@ -37,14 +47,26 @@ public final class ValidatorUtil {
         return result;
     }
 
-    /**
-     * 校验参数，校验不通过将抛出校验错误异常
-     *
-     * @param target 校验对象
-     * @param <T>    校验对象类型
-     */
-    public static <T> void validateAndCheck(T target) {
-        validate(target).checkValidateResult();
+    private static <T> Optional<ConstraintViolationException> generateViolationException(T target) {
+        ConstraintViolationException ex = null;
+        Set<ConstraintViolation<T>> violations = getValidator().validate(target);
+        if (!violations.isEmpty()) {
+            List<String> violationMessageList = violations.stream().collect(ArrayList::new,
+                    (list, violation) -> list.add(violation.getMessage()),
+                    ArrayList::addAll);
+            String violationMessage = Joiner.on(SEPARATOR).join(violationMessageList);
+            ex = new ConstraintViolationException(violationMessage, violations);
+        }
+
+        return Optional.ofNullable(ex);
+    }
+
+    public static Validator getValidator() {
+        return Objects.requireNonNull(validator, "validator uninitialized");
+    }
+
+    public static void setValidator(Validator validator) {
+        ValidatorUtil.validator = validator;
     }
 
     /**
@@ -87,20 +109,6 @@ public final class ValidatorUtil {
         }
 
         return result;
-    }
-
-    private static <T> Optional<ConstraintViolationException> generateViolationException(T target) {
-        ConstraintViolationException ex = null;
-        Set<ConstraintViolation<T>> violations = validator.validate(target);
-        if (!violations.isEmpty()) {
-            List<String> violationMessageList = violations.stream().collect(ArrayList::new,
-                    (list, violation) -> list.add(violation.getMessage()),
-                    ArrayList::addAll);
-            String violationMessage = Joiner.on(SEPARATOR).join(violationMessageList);
-            ex = new ConstraintViolationException(violationMessage, violations);
-        }
-
-        return Optional.ofNullable(ex);
     }
 
     public static class ValidateResult<T> {
