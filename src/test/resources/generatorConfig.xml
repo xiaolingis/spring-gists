@@ -9,6 +9,7 @@
         <property name="javaFileEncoding" value="UTF-8"/>
         <!-- formatter -->
         <property name="xmlFormatter" value="generator.formatter.FormatXmlFormatter"/>
+        <property name="javaFormatter" value="generator.formatter.FormatJavaFormatter"/>
         <!-- 自动识别数据库关键字 -->
         <property name="autoDelimitKeywords" value="true"/>
         <property name="beginningDelimiter" value="`"/>
@@ -49,6 +50,12 @@
                          targetProject="generated-sources/resources">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
+
+        <!-- 生成 DAO 的包名和位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.bz.gists.mapper"
+                             targetProject="generated-sources">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
 
         <!-- 数据库表 -->
         <table tableName="t_user" domainObjectName="User">
