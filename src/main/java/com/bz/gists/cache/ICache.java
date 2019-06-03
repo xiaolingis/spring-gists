@@ -37,4 +37,9 @@ public interface ICache extends Ordered {
     default long effectiveTime() {
         return Duration.ofMinutes(5).getSeconds();
     }
+
+    /**
+     * 缓存版本
+     */
+    long version();
 }

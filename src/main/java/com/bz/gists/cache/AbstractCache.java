@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.util.StopWatch;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public abstract class AbstractCache implements ICache {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCache.class);
@@ -14,6 +16,8 @@ public abstract class AbstractCache implements ICache {
     private String cacheName;
 
     private int order;
+
+    private AtomicLong version = new AtomicLong(1);
 
     public AbstractCache(String cacheName) {
         this(cacheName, Ordered.LOWEST_PRECEDENCE);
@@ -41,17 +45,23 @@ public abstract class AbstractCache implements ICache {
         try {
             if (refreshNeeded()) {
                 StopWatch watch = new StopWatch();
-                LOGGER.info("start to refresh cache {}", cacheName);
+                LOGGER.info("start to refresh cache {}, version {}", cacheName, version.get());
                 watch.start();
                 load();
+                version.incrementAndGet();
                 watch.stop();
-                LOGGER.info("end to refresh cache {} , eclipsed time {} s", cacheName, watch.getTotalTimeSeconds());
+                LOGGER.info("end to refresh cache {} , eclipsed time {} s, version {}", cacheName, watch.getTotalTimeSeconds(), version.get());
                 return;
             }
             LOGGER.info("no need to refresh cache {}", cacheName);
         } catch (Exception e) {
             LOGGER.error("occur error while refresh cache {}. stacktrace:", cacheName, e);
         }
+    }
+
+    @Override
+    public long version() {
+        return version.get();
     }
 
     @Override
