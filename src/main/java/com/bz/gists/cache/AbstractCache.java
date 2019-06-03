@@ -48,7 +48,7 @@ public abstract class AbstractCache implements ICache {
                 LOGGER.info("start to refresh cache {}, version {}", cacheName, version.get());
                 watch.start();
                 load();
-                version.incrementAndGet();
+                version.getAndIncrement();
                 watch.stop();
                 LOGGER.info("end to refresh cache {} , eclipsed time {} s, version {}", cacheName, watch.getTotalTimeSeconds(), version.get());
                 return;
