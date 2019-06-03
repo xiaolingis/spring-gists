@@ -36,57 +36,44 @@ public class FormatXmlFormatter extends DefaultXmlFormatter {
                 if (StringUtils.startsWith(line, SPACE + "<resultMap id=\"BaseResultMap\"")) {
                     newContent.append(comment("<!-- ============ MyBatis Generator 生成文件，不要编辑该文件 ============ -->"));
                     newContent.append(comment("<!-- ============ 通用查询映射结果 ============ -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<resultMap extends=\"BaseResultMap\" id=\"ResultMapWithBLOBs\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<resultMap extends=\"BaseResultMap\" id=\"ResultMapWithBLOBs\"")) {
                     newContent.append(comment("<!-- 大字段查询映射结果 -->"));
-                }
-                if (StringUtils.equals(line, SPACE + "<sql id=\"Base_Column_List\">")) {
+                } else if (StringUtils.equals(line, SPACE + "<sql id=\"Base_Column_List\">")) {
                     newContent.append(comment("<!-- 通用查询结果列 -->"));
-                }
-                if (StringUtils.equals(line, SPACE + "<sql id=\"Blob_Column_List\">")) {
+                } else if (StringUtils.equals(line, SPACE + "<sql id=\"Blob_Column_List\">")) {
                     newContent.append(comment("<!-- 大字段查询结果列 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<insert id=\"insert\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<select id=\"selectByExampleWithBLOBs\"")) {
+                    newContent.append(comment("<!-- 根据 Example 查询，包含大字段 -->"));
+                } else if (StringUtils.startsWith(line, SPACE + "<insert id=\"insert\"")) {
                     newContent.append(comment("<!-- 插入记录 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<insert id=\"insertSelective\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<insert id=\"insertSelective\"")) {
                     newContent.append(comment("<!-- 插入记录，只插入非空字段 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<select id=\"selectByPrimaryKey\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<select id=\"selectByPrimaryKey\"")) {
                     newContent.append(comment("<!-- 根据主键查询 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKey\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKey\"")) {
                     newContent.append(comment("<!-- 根据主键更新 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKeySelective\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKeySelective\"")) {
                     newContent.append(comment("<!-- 根据主键更新记录，只更新非空字段 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<delete id=\"deleteByPrimaryKey\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<delete id=\"deleteByPrimaryKey\"")) {
                     newContent.append(comment("<!-- 根据主键删除 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<sql id=\"Example_Where_Clause\">")) {
-                    newContent.append(comment("<!-- 查询 Example WHERE 子句 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<sql id=\"Update_By_Example_Where_Clause\">")) {
-                    newContent.append(comment("<!-- 更新 Example WHERE 子句 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<select id=\"selectByExample\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<sql id=\"Example_Where_Clause\">")) {
+                    newContent.append(comment("<!-- Example 查询子句 -->"));
+                } else if (StringUtils.startsWith(line, SPACE + "<sql id=\"Update_By_Example_Where_Clause\">")) {
+                    newContent.append(comment("<!-- Example 更新子句 -->"));
+                } else if (StringUtils.startsWith(line, SPACE + "<select id=\"selectByExample\"")) {
                     newContent.append(comment("<!-- 根据 Example 查询 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<select id=\"countByExample\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<select id=\"countByExample\"")) {
                     newContent.append(comment("<!-- 根据 Example 查询数量 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByExampleSelective\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByExampleSelective\"")) {
                     newContent.append(comment("<!-- 根据 Example 更新非空字段 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByExample\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByExample\"")) {
                     newContent.append(comment("<!-- 根据 Example 更新 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<delete id=\"deleteByExample\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<delete id=\"deleteByExample\"")) {
                     newContent.append(comment("<!-- 根据 Example 删除 -->"));
-                }
-                if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKeyWithBLOBs\"")) {
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByPrimaryKeyWithBLOBs\"")) {
                     newContent.append(comment("<!-- 根据主键更新，包含大字段 -->"));
+                } else if (StringUtils.startsWith(line, SPACE + "<update id=\"updateByExampleWithBLOBs\"")) {
+                    newContent.append(comment("<!-- 根据 Example 更新，包含大字段 -->"));
                 }
                 newContent.append(line);
                 newContent.append(System.lineSeparator());
