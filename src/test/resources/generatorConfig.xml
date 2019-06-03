@@ -14,8 +14,6 @@
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
-        <!-- 生成的模型实现 toString -->
-        <plugin type="generator.plugins.ToStringPlugin"/>
         <!-- 生成的模型实现可序列化 -->
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
         <!-- 更改默认配置 -->
