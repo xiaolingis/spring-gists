@@ -2,7 +2,7 @@ package com.bz.gists.config;
 
 import com.github.pagehelper.PageInterceptor;
 
-import org.springframework.context.annotation.Bean;
+import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -11,10 +11,9 @@ import org.springframework.context.annotation.Configuration;
  * @author zhongyongbin
  */
 @Configuration
-public class MyBatisConfiguration {
-
-    @Bean
-    public PageInterceptor pageInterceptor() {
-        return new PageInterceptor();
+public class MyBatisConfiguration implements ConfigurationCustomizer {
+    @Override
+    public void customize(org.apache.ibatis.session.Configuration configuration) {
+        configuration.addInterceptor(new PageInterceptor());
     }
 }
