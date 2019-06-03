@@ -16,11 +16,17 @@ import java.io.StringReader;
 public class FormatJavaFormatter extends DefaultJavaFormatter {
     private static final String SPACE = "    ";
 
+    private static final String MAPPER_SUFFIX = "Mapper";
+
     @Override
     public String getFormattedContent(CompilationUnit compilationUnit) {
-        String formattedContent = compilationUnit.getFormattedContent();
-        formattedContent = addComment(formattedContent);
-        return formattedContent;
+        if (StringUtils.endsWith(compilationUnit.getType().getShortName(), MAPPER_SUFFIX)) {
+            String formattedContent = compilationUnit.getFormattedContent();
+            formattedContent = addComment(formattedContent);
+            return formattedContent;
+        } else {
+            return super.getFormattedContent(compilationUnit);
+        }
     }
 
     private String addComment(String content) {
