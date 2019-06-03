@@ -17,7 +17,7 @@ public abstract class AbstractCache implements ICache {
 
     private int order;
 
-    private AtomicLong version = new AtomicLong(1);
+    private final AtomicLong version = new AtomicLong(1);
 
     public AbstractCache(String cacheName) {
         this(cacheName, Ordered.LOWEST_PRECEDENCE);
