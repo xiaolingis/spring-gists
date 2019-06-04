@@ -12,16 +12,18 @@ import org.mybatis.generator.internal.DefaultCommentGenerator;
 import org.mybatis.generator.internal.util.StringUtility;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
 
 import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 
 /**
-  * Created on 2018-11-01
-  *
-  * @author zhongyongbin
-  */
+ * Created on 2018-11-01
+ *
+ * @author zhongyongbin
+ */
 public class RemarksCommentGenerator extends DefaultCommentGenerator {
     private Properties properties;
     private boolean suppressDate;
@@ -107,11 +109,14 @@ public class RemarksCommentGenerator extends DefaultCommentGenerator {
         }
 
         topLevelClass.addJavaDocLine("/**");
-
+        topLevelClass.addJavaDocLine(String.format(" * Created on %s", DateTimeFormatter.ofPattern("yyyy/MM/dd").format(LocalDate.now())));
+        topLevelClass.addJavaDocLine(" *");
         StringBuilder sb = new StringBuilder();
         sb.append(" * 数据库表: ");
         sb.append(introspectedTable.getFullyQualifiedTable());
         topLevelClass.addJavaDocLine(sb.toString());
+        topLevelClass.addJavaDocLine(" * ");
+        topLevelClass.addJavaDocLine(" * @author Mybatis Generator");
         topLevelClass.addJavaDocLine(" */");
     }
 
