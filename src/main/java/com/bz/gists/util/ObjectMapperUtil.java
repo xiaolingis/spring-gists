@@ -24,7 +24,7 @@ public final class ObjectMapperUtil {
      * @param obj 待序列化对象
      * @return json 字符串
      */
-    public static String toJson(Object obj) {
+    public static String transferToString(Object obj) {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
@@ -46,7 +46,7 @@ public final class ObjectMapperUtil {
      * @param obj 待序列化对象
      * @return json 字符串
      */
-    public static String toPrettyJson(Object obj) {
+    public static String transferToStringPretty(Object obj) {
         try {
             return getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public final class ObjectMapperUtil {
      * @param clazz 对象类型
      * @return 通过反序列化得到的对象
      */
-    public static <T> T fromJson(String json, Class<T> clazz) {
+    public static <T> T transferToObject(String json, Class<T> clazz) {
         try {
             return getObjectMapper().readValue(json, clazz);
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public final class ObjectMapperUtil {
      * @param parameterClasses 泛型参数类型
      * @return 通过反序列化得到的对象
      */
-    public static <T> T fromJson(String json, Class<?> clazz, Class<?>... parameterClasses) {
+    public static <T> T transferToObject(String json, Class<?> clazz, Class<?>... parameterClasses) {
         try {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(clazz, parameterClasses);
             return getObjectMapper().readValue(json, javaType);

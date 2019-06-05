@@ -66,7 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> unexpectedExceptionHandler(Throwable ex, HttpServletRequest request) {
         LOGGER.error("unexpected exception occur, uri:[{}], params:[{}], request body:[{}], stacktrace:",
                 request.getRequestURI(),
-                ObjectMapperUtil.toJson(request.getParameterMap()),
+                ObjectMapperUtil.transferToString(request.getParameterMap()),
                 request.getAttribute(RequestBodyAttributeAdvice.REQUEST_BODY_ATTRIBUTE_NAME),
                 ex);
         ResponseEntity<Object> responseEntity;
