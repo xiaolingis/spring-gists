@@ -7,7 +7,7 @@ import com.bz.gists.exception.ForbiddenException;
 import com.bz.gists.exception.InvalidParameterException;
 import com.bz.gists.exception.NotFoundException;
 import com.bz.gists.exception.UnexpectedException;
-import com.bz.gists.util.JsonUtil;
+import com.bz.gists.util.ObjectMapperUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> unexpectedExceptionHandler(Throwable ex, HttpServletRequest request) {
         LOGGER.error("unexpected exception occur, uri:[{}], params:[{}], request body:[{}], stacktrace:",
                 request.getRequestURI(),
-                JsonUtil.toJson(request.getParameterMap()),
+                ObjectMapperUtil.toJson(request.getParameterMap()),
                 request.getAttribute(RequestBodyAttributeAdvice.REQUEST_BODY_ATTRIBUTE_NAME),
                 ex);
         ResponseEntity<Object> responseEntity;

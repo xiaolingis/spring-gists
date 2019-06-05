@@ -1,10 +1,8 @@
 package com.bz.gists.mybatis.handler;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.bz.gists.util.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -31,13 +29,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJsonTypeHandler.class);
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-    }
+    private ObjectMapper objectMapper = ObjectMapperUtil.getObjectMapper();
 
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, T t, JdbcType jdbcType) throws SQLException {

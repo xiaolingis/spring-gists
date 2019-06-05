@@ -11,11 +11,11 @@ import java.util.Objects;
  *
  * @author zhongyongbin
  */
-public final class JsonUtil {
+public final class ObjectMapperUtil {
 
     private static ObjectMapper objectMapper;
 
-    private JsonUtil() {
+    private ObjectMapperUtil() {
     }
 
     /**
@@ -37,7 +37,7 @@ public final class JsonUtil {
     }
 
     public static void setObjectMapper(ObjectMapper objectMapper) {
-        JsonUtil.objectMapper = objectMapper;
+        ObjectMapperUtil.objectMapper = objectMapper;
     }
 
     /**

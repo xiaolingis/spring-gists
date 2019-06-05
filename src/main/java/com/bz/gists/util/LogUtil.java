@@ -29,7 +29,7 @@ public final class LogUtil {
         Map<String, Object> log = new LinkedHashMap<>();
         log.put(TIMESTAMP_KEY, LOG_TIME_FORMATTER.format(LocalDateTime.now()));
         log.put(SOURCE_KEY, source);
-        logger.info(JsonUtil.toJson(log));
+        logger.info(ObjectMapperUtil.toJson(log));
     }
 
     @SafeVarargs
@@ -39,7 +39,7 @@ public final class LogUtil {
         Map<String, Object> source = new LinkedHashMap<>(data.length);
         Arrays.stream(data).forEach(pair -> source.put(pair.getKey(), pair.getValue()));
 
-        logger.info(JsonUtil.toJson(new LinkedHashMap<String, Object>() {{
+        logger.info(ObjectMapperUtil.toJson(new LinkedHashMap<String, Object>() {{
             this.put(TIMESTAMP_KEY, LOG_TIME_FORMATTER.format(LocalDateTime.now()));
             this.put(SOURCE_KEY, source);
         }}));

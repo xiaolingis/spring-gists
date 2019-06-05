@@ -1,6 +1,6 @@
 package com.bz.gists.config;
 
-import com.bz.gists.util.JsonUtil;
+import com.bz.gists.util.ObjectMapperUtil;
 import com.bz.gists.util.ValidatorUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,7 +27,7 @@ public class StaticContextInitializer {
 
     @PostConstruct
     public void init() {
-        JsonUtil.setObjectMapper(objectMapper);
+        ObjectMapperUtil.setObjectMapper(objectMapper);
         ValidatorUtil.setValidator(validator);
     }
 }
