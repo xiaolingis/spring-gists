@@ -42,4 +42,11 @@ public interface ICache extends Ordered {
      * 缓存版本
      */
     long version();
+
+    /**
+     * 初始化时是否同步
+     */
+    default boolean isInitSync() {
+        return true;
+    }
 }

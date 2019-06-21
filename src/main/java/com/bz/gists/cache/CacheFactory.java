@@ -30,7 +30,14 @@ public final class CacheFactory {
     public void init() {
         if (!CollectionUtils.isEmpty(caches)) {
             caches.sort(Comparator.comparingInt(ICache::getOrder));
-            caches.forEach(cache -> scheduler.scheduleWithFixedDelay(cache::refresh, 0, cache.effectiveTime(), TimeUnit.SECONDS));
+            caches.forEach(cache -> {
+                if (cache.isInitSync()) {
+                    cache.refresh();
+                    scheduler.scheduleWithFixedDelay(cache::refresh, cache.effectiveTime(), cache.effectiveTime(), TimeUnit.SECONDS);
+                } else {
+                    scheduler.scheduleWithFixedDelay(cache::refresh, 0, cache.effectiveTime(), TimeUnit.SECONDS);
+                }
+            });
         }
     }
 }
