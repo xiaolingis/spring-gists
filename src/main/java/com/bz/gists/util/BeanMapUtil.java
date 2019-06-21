@@ -5,7 +5,10 @@ import com.google.common.base.CaseFormat;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,13 +22,17 @@ import java.util.Optional;
  */
 public final class BeanMapUtil {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanMapUtil.class);
+
+    private static String DEFAULT_EXCLUDE_KEY = "class";
+
     private static KeyType keyType = KeyType.SNAKE;
 
     public static Map<String, Object> describe(Object bean, String... excludedProperties) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
-            if (!StringUtils.equals("class", key) && Arrays.stream(excludedProperties).noneMatch(attr -> StringUtils.equals(attr, key))) {
+            if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && Arrays.stream(excludedProperties).noneMatch(attr -> StringUtils.equals(attr, key))) {
                 map.put(key(key), String.valueOf(v));
             }
         });
@@ -37,7 +44,7 @@ public final class BeanMapUtil {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
-            if (!StringUtils.equals("class", key) && !StringUtils.startsWith(key, excludedPropertiesPrefix)) {
+            if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.startsWith(key, excludedPropertiesPrefix)) {
                 map.put(key(key), String.valueOf(v));
             }
         });
@@ -49,7 +56,7 @@ public final class BeanMapUtil {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
-            if (!StringUtils.equals("class", key) && !StringUtils.endsWith(key, excludedPropertiesSuffix)) {
+            if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.endsWith(key, excludedPropertiesSuffix)) {
                 map.put(key(key), String.valueOf(v));
             }
         });
@@ -57,12 +64,18 @@ public final class BeanMapUtil {
         return map;
     }
 
-    public static <T> Optional<T> populate(Map<String, ?> beanMap, Class<T> type) throws ReflectiveOperationException {
-        if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
-            T instance = type.newInstance();
-            BeanUtils.populate(instance, toCamelMap(beanMap));
-            return Optional.of(instance);
-        } else {
+    public static <T> Optional<T> populate(Map<String, ?> beanMap, Class<T> type) {
+        try {
+
+            if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
+                T instance = type.newInstance();
+                BeanUtils.populate(instance, toCamelMap(beanMap));
+                return Optional.of(instance);
+            } else {
+                return Optional.empty();
+            }
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            LOGGER.error("populate fail!", e);
             return Optional.empty();
         }
     }
