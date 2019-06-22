@@ -16,28 +16,48 @@ import java.util.Date;
  */
 public final class TemporalUtil {
 
+    public static DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;
+
+    public static DateTimeFormatter yyMMdd = DateTimeFormatter.ofPattern("yyMMdd");
+
+    public static DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+    public static DateTimeFormatter yyyyMMddHHmmss = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+    public static DateTimeFormatter yy_MM_dd = DateTimeFormatter.ofPattern("yy-MM-dd");
+
+    public static DateTimeFormatter yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static DateTimeFormatter yyyy_MM_dd_HH_mm_ss = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public static DateTimeFormatter yyyy_MM_dd_HH_mm_ss_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
     private TemporalUtil() {
     }
 
-    public static String timeToString(Temporal temporal, Formatter formatter) {
-        return formatter.dateTimeFormatter.format(temporal);
+    public static String timeToString(Temporal temporal, DateTimeFormatter formatter) {
+        return formatter.format(temporal);
     }
 
-    public static LocalDate stringToDate(String strTime, Formatter formatter) {
-        return LocalDate.parse(strTime, formatter.dateTimeFormatter);
+    public static LocalDate stringToDate(String strTime, DateTimeFormatter formatter) {
+        return LocalDate.parse(strTime, formatter);
     }
 
-    public static LocalDateTime stringToDateTime(String strTime, Formatter formatter) {
-        return LocalDateTime.parse(strTime, formatter.dateTimeFormatter);
+    public static LocalDateTime stringToDateTime(String strTime, DateTimeFormatter formatter) {
+        return LocalDateTime.parse(strTime, formatter);
     }
+
 
     public static Date temporalToDate(LocalDateTime dateTime) {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    public static LocalDateTime timestampToTemporal(long timestamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+    }
 
     public static LocalDateTime dateToTemporal(Date date) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+        return timestampToTemporal(date.getTime());
     }
 
     public static LocalDateTime getMaxDateTime(LocalDate date) {
@@ -62,21 +82,5 @@ public final class TemporalUtil {
 
     public static LocalDateTime getNoonDateTime(LocalDateTime dateTime) {
         return getNoonDateTime(dateTime.toLocalDate());
-    }
-
-    public enum Formatter {
-        ISO(DateTimeFormatter.ISO_DATE_TIME),
-        yyMMdd(DateTimeFormatter.ofPattern("yyMMdd")),
-        yyyyMMdd(DateTimeFormatter.ofPattern("yyyyMMdd")),
-        yyyyMMddHHmmss(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")),
-        yy_MM_dd(DateTimeFormatter.ofPattern("yy-MM-dd")),
-        yyyy_MM_dd(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-        yyyy_MM_dd_HH_mm_ss(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
-        final DateTimeFormatter dateTimeFormatter;
-
-        Formatter(DateTimeFormatter dateTimeFormatter) {
-            this.dateTimeFormatter = dateTimeFormatter;
-        }
     }
 }

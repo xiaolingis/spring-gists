@@ -36,26 +36,27 @@ public abstract class BaseCrontab<T> {
 
     final void execute(String json) {
         long startTime = System.currentTimeMillis();
+        long endTime;
         try {
 
             T parameterObject = StringUtils.isNotBlank(json) ? objectMapper.readValue(json, getJavaType()) : null;
             CrontabResult result = this.executeInternal(parameterObject);
-
+            endTime = System.currentTimeMillis();
             LogUtil.dataLog(CRONTAB_DATA_LOGGER,
                     Pair.of("crontab", this.getClass().getSimpleName()),
                     Pair.of("parameter", parameterObject),
-                    Pair.of("start_time", LogUtil.formatTimestamp(startTime)),
-                    Pair.of("end_time", LogUtil.formatTimestamp(System.currentTimeMillis())),
-                    Pair.of("duration_time", System.currentTimeMillis() - startTime),
+                    Pair.of("start_time", startTime),
+                    Pair.of("end_time", endTime),
+                    Pair.of("duration_time", endTime - startTime),
                     Pair.of("result", result));
         } catch (Exception e) {
             LOGGER.error("crontab=[{}] ; parameter_json=[{}] ; stacktrace: ", this.getClass().getSimpleName(), json, e);
-
+            endTime = System.currentTimeMillis();
             LogUtil.dataLog(CRONTAB_DATA_LOGGER,
                     Pair.of("crontab", this.getClass().getSimpleName()),
-                    Pair.of("start_time", LogUtil.formatTimestamp(startTime)),
-                    Pair.of("end_time", LogUtil.formatTimestamp(System.currentTimeMillis())),
-                    Pair.of("duration_time", System.currentTimeMillis() - startTime),
+                    Pair.of("start_time", startTime),
+                    Pair.of("end_time", endTime),
+                    Pair.of("duration_time", endTime - startTime),
                     Pair.of("parameter", json),
                     Pair.of("result", CrontabResult.ofException().setMessage(String.format("%s: %s", e.getClass().getSimpleName(), e.getMessage()))));
         }
