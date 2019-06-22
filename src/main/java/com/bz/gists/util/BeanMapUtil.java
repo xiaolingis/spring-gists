@@ -2,13 +2,12 @@ package com.bz.gists.util;
 
 import com.google.common.base.CaseFormat;
 
+import com.bz.gists.exception.UnexpectedException;
+
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +20,6 @@ import java.util.Optional;
  * @author zhongyongbin
  */
 public final class BeanMapUtil {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeanMapUtil.class);
 
     private static String DEFAULT_EXCLUDE_KEY = "class";
 
@@ -74,9 +71,8 @@ public final class BeanMapUtil {
             } else {
                 return Optional.empty();
             }
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            LOGGER.error("populate fail!", e);
-            return Optional.empty();
+        } catch (Exception e) {
+            throw new UnexpectedException("populate fail!", e);
         }
     }
 

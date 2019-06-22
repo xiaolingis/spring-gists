@@ -1,5 +1,7 @@
 package com.bz.gists.util;
 
+import com.bz.gists.exception.UnexpectedException;
+
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -18,7 +20,7 @@ public final class ExtendClassUtil {
                 BeanUtils.copyProperties(source, extendInstance);
                 return extendInstance;
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("exception occurs while instantiating", e);
+                throw new UnexpectedException("exception occurs while instantiating", e);
             }
         } else {
             throw new IllegalArgumentException("no inheritance");
