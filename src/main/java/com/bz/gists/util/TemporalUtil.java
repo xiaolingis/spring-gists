@@ -39,48 +39,55 @@ public final class TemporalUtil {
         return formatter.format(temporal);
     }
 
-    public static LocalDate stringToDate(String strTime, DateTimeFormatter formatter) {
+    public static String timestampToString(long timestamp, DateTimeFormatter formatter) {
+        return formatter.format(timestampToTemporal(timestamp));
+    }
+
+    public static LocalDate stringToLocalDate(String strTime, DateTimeFormatter formatter) {
         return LocalDate.parse(strTime, formatter);
     }
 
-    public static LocalDateTime stringToDateTime(String strTime, DateTimeFormatter formatter) {
+    public static LocalDateTime stringToLocalDateTime(String strTime, DateTimeFormatter formatter) {
         return LocalDateTime.parse(strTime, formatter);
     }
 
+    public static long stringToTimestamp(String strTime, DateTimeFormatter formatter) {
+        return LocalDateTime.parse(strTime, formatter).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
 
     public static Date temporalToDate(LocalDateTime dateTime) {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public static LocalDateTime timestampToTemporal(long timestamp) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
     public static LocalDateTime dateToTemporal(Date date) {
         return timestampToTemporal(date.getTime());
     }
 
-    public static LocalDateTime getMaxDateTime(LocalDate date) {
-        return LocalDateTime.of(date, LocalTime.MAX);
+    public static LocalDateTime timestampToTemporal(long timestamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
     }
 
     public static LocalDateTime getMaxDateTime(LocalDateTime dateTime) {
         return getMaxDateTime(dateTime.toLocalDate());
     }
 
-    public static LocalDateTime getMinDateTime(LocalDate date) {
-        return LocalDateTime.of(date, LocalTime.MIN);
+    public static LocalDateTime getMaxDateTime(LocalDate date) {
+        return LocalDateTime.of(date, LocalTime.MAX);
     }
 
     public static LocalDateTime getMinDateTime(LocalDateTime dateTime) {
         return getMinDateTime(dateTime.toLocalDate());
     }
 
-    public static LocalDateTime getNoonDateTime(LocalDate date) {
-        return LocalDateTime.of(date, LocalTime.NOON);
+    public static LocalDateTime getMinDateTime(LocalDate date) {
+        return LocalDateTime.of(date, LocalTime.MIN);
     }
 
     public static LocalDateTime getNoonDateTime(LocalDateTime dateTime) {
         return getNoonDateTime(dateTime.toLocalDate());
+    }
+
+    public static LocalDateTime getNoonDateTime(LocalDate date) {
+        return LocalDateTime.of(date, LocalTime.NOON);
     }
 }
