@@ -23,44 +23,65 @@ public final class BeanMapUtil {
 
     private static String DEFAULT_EXCLUDE_KEY = "class";
 
-    private static KeyType keyType = KeyType.SNAKE;
+    private static KeyNameType keyNameType = KeyNameType.SNAKE;
 
+    /**
+     * 将对象转化为Map
+     *
+     * @param bean               对象
+     * @param excludedProperties 不想转化的属性名
+     */
     public static Map<String, Object> describe(Object bean, String... excludedProperties) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && Arrays.stream(excludedProperties).noneMatch(attr -> StringUtils.equals(attr, key))) {
-                map.put(key(key), String.valueOf(v));
+                map.put(keyName(key), String.valueOf(v));
             }
         });
 
         return map;
     }
 
+    /**
+     * 将对象转化为Map
+     *
+     * @param bean                     对象
+     * @param excludedPropertiesPrefix 不想转化的属性名的前序
+     */
     public static Map<String, Object> describeExcludedPropertiesPrefix(Object bean, String excludedPropertiesPrefix) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.startsWith(key, excludedPropertiesPrefix)) {
-                map.put(key(key), String.valueOf(v));
+                map.put(keyName(key), String.valueOf(v));
             }
         });
 
         return map;
     }
 
+    /**
+     * 将对象转化为Map
+     *
+     * @param bean                     对象
+     * @param excludedPropertiesSuffix 不想转化的属性名的后序
+     */
     public static Map<String, Object> describeExcludedPropertiesSuffix(Object bean, String excludedPropertiesSuffix) {
         Map<String, Object> map = new HashMap<>();
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.endsWith(key, excludedPropertiesSuffix)) {
-                map.put(key(key), String.valueOf(v));
+                map.put(keyName(key), String.valueOf(v));
             }
         });
 
         return map;
     }
 
+    /**
+     * 将 Map 转化为对象
+     */
     public static <T> Optional<T> populate(Map<String, ?> beanMap, Class<T> type) {
         try {
 
@@ -76,12 +97,15 @@ public final class BeanMapUtil {
         }
     }
 
-    public static void setKeyType(KeyType keyType) {
-        BeanMapUtil.keyType = keyType;
+    /**
+     * 设置 Map 的 key 名称类型，分别有下划线（蛇形）以及驼峰。参看 {@link KeyNameType}
+     */
+    public static void setKeyNameType(KeyNameType keyNameType) {
+        BeanMapUtil.keyNameType = keyNameType;
     }
 
-    private static String key(String key) {
-        switch (keyType) {
+    private static String keyName(String key) {
+        switch (keyNameType) {
             case SNAKE:
                 return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, key);
             case CAMEL:
@@ -92,7 +116,7 @@ public final class BeanMapUtil {
     }
 
     private static Map<String, ?> toCamelMap(Map<String, ?> beanMap) {
-        if (keyType == KeyType.SNAKE) {
+        if (keyNameType == KeyNameType.SNAKE) {
             Map<String, Object> data = new HashMap<>(beanMap.size());
             beanMap.forEach((k, v) -> data.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, k), v));
 
@@ -101,7 +125,7 @@ public final class BeanMapUtil {
         return beanMap;
     }
 
-    public enum KeyType {
+    public enum KeyNameType {
         SNAKE, CAMEL
     }
 }

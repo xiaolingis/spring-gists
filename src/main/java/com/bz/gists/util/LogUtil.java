@@ -12,6 +12,8 @@ import java.util.Map;
 /**
  * Created at 2019/1/2
  *
+ * 以 JSON 的格式将内容输入到日志
+ *
  * @author zhongyongbin
  */
 public final class LogUtil {

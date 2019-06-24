@@ -10,6 +10,9 @@ import java.util.Map;
  */
 public final class MapUtil {
 
+    /**
+     * 将 Map 的 Key 和 Value 都转换为字符串
+     */
     public static Map<String, String> toStringMap(Map<?, ?> map) {
         Map<String, String> stringMap = new HashMap<>(map.size());
         map.forEach((k, v) -> stringMap.put(String.valueOf(k), String.valueOf(v)));
@@ -17,6 +20,9 @@ public final class MapUtil {
         return stringMap;
     }
 
+    /**
+     * 将 Map 的 Key 转换为字符串
+     */
     public static Map<String, Object> toStringKeyMap(Map<?, ?> map) {
         Map<String, Object> stringKeyMap = new HashMap<>(map.size());
         map.forEach((k, v) -> stringKeyMap.put(String.valueOf(k), v));
