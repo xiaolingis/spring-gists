@@ -16,8 +16,6 @@ import java.util.Date;
  */
 public final class TemporalUtil {
 
-    public static DateTimeFormatter ISO = DateTimeFormatter.ISO_DATE_TIME;
-
     public static DateTimeFormatter yyMMdd = DateTimeFormatter.ofPattern("yyMMdd");
 
     public static DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
