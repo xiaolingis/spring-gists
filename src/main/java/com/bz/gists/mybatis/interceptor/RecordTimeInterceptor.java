@@ -22,13 +22,13 @@ import java.util.Properties;
 /**
  * Created on 2018-11-01
  *
- * MyBatis 拦截器，主要用于设置审计字段值
+ * MyBatis 拦截器，记录生成时间和更新时间
  *
  * @author zhongyongbin
  */
 @Component
 @Intercepts(@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}))
-public class AuditingInterceptor implements Interceptor {
+public class RecordTimeInterceptor implements Interceptor {
 
     private static final String CREATE_TIME_FIELD = "createTime";
 
