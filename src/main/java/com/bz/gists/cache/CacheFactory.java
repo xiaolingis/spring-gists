@@ -31,7 +31,13 @@ public final class CacheFactory {
         if (!CollectionUtils.isEmpty(caches)) {
             caches.sort(Comparator.comparingInt(ICache::getOrder));
             caches.forEach(cache -> {
-                long initDelay = cache.isInitSync() ? cache.effectiveTime() : 0;
+                long initDelay;
+                if (cache.isInitSync()) {
+                    cache.refresh();
+                    initDelay = cache.effectiveTime();
+                } else {
+                    initDelay = 0;
+                }
                 scheduler.scheduleWithFixedDelay(cache::refresh, initDelay, cache.effectiveTime(), TimeUnit.SECONDS);
             });
         }
