@@ -17,7 +17,9 @@ public interface ICache extends Ordered {
      *
      * @return true : 需要 ; false : 不需要
      */
-    boolean refreshNeeded();
+    default boolean refreshNeeded() {
+        return true;
+    }
 
     /**
      * 缓存刷新
