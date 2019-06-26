@@ -208,6 +208,6 @@ public final class TemporalUtil {
      * @param period 时间周期，单位有 s m h d w M y ，分别对应秒，分，时，天，周，月，年
      */
     public static Duration parsePeriod(String period) {
-        return Duration.ofMillis(periodFormatter.parsePeriod(period).getMillis());
+        return Duration.ofMillis(periodFormatter.parsePeriod(period).toStandardDuration().getMillis());
     }
 }
