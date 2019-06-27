@@ -43,7 +43,7 @@ spring:
     active: '@profiles.active@'
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     deserialization:
       FAIL_ON_UNKNOWN_PROPERTIES: false
