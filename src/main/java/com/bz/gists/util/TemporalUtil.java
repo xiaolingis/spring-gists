@@ -22,21 +22,21 @@ import java.util.Date;
  */
 public final class TemporalUtil {
 
-    public static DateTimeFormatter yyMMdd = DateTimeFormatter.ofPattern("yyMMdd");
+    public static final DateTimeFormatter yyMMdd = DateTimeFormatter.ofPattern("yyMMdd");
 
-    public static DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public static final DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    public static DateTimeFormatter yyyyMMddHHmmss = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+    public static final DateTimeFormatter yyyyMMddHHmmss = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
-    public static DateTimeFormatter yy_MM_dd = DateTimeFormatter.ofPattern("yy-MM-dd");
+    public static final DateTimeFormatter yy_MM_dd = DateTimeFormatter.ofPattern("yy-MM-dd");
 
-    public static DateTimeFormatter yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static final DateTimeFormatter yyyy_MM_dd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static DateTimeFormatter yyyy_MM_dd_HH_mm_ss = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter yyyy_MM_dd_HH_mm_ss = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static DateTimeFormatter yyyy_MM_dd_HH_mm_ss_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    public static final DateTimeFormatter yyyy_MM_dd_HH_mm_ss_SSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-    private static PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
+    private static final PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
             .appendSeconds().appendSuffix("s")
             .appendMinutes().appendSuffix("m")
             .appendHours().appendSuffix("h")
