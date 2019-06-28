@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 public final class BeanMapUtil {
 
-    private static String DEFAULT_EXCLUDE_KEY = "class";
+    private static final String DEFAULT_EXCLUDE_KEY = "class";
 
     private static KeyNameType keyNameType = KeyNameType.SNAKE;
 
