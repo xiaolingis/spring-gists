@@ -1,6 +1,5 @@
 package com.bz.gists.util;
 
-import com.bz.gists.exception.UnexpectedException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,14 +27,24 @@ public final class ObjectMapperUtil {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
-            throw new UnexpectedException("json serialization error.", e);
+            throw new RuntimeException("json serialization error.", e);
         }
     }
 
+    /**
+     * 使用的 ObjectMapper
+     *
+     * @return ObjectMapper
+     */
     public static ObjectMapper getObjectMapper() {
         return Objects.requireNonNull(objectMapper, "objectMapper uninitialized");
     }
 
+    /**
+     * 设置 ObjectMapper
+     *
+     * @param objectMapper ObjectMapper
+     */
     public static void setObjectMapper(ObjectMapper objectMapper) {
         ObjectMapperUtil.objectMapper = objectMapper;
     }
@@ -50,7 +59,7 @@ public final class ObjectMapperUtil {
         try {
             return getObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
         } catch (Exception e) {
-            throw new UnexpectedException("json serialization error.", e);
+            throw new JsonException("json serialization error.", e);
         }
     }
 
@@ -59,13 +68,14 @@ public final class ObjectMapperUtil {
      *
      * @param json  json 字符串
      * @param clazz 对象类型
+     * @param <T>   要转换的对象类型
      * @return 通过反序列化得到的对象
      */
     public static <T> T transferToObject(String json, Class<T> clazz) {
         try {
             return getObjectMapper().readValue(json, clazz);
         } catch (Exception e) {
-            throw new UnexpectedException("json deserialization error.", e);
+            throw new JsonException("json deserialization error.", e);
         }
     }
 
@@ -75,6 +85,7 @@ public final class ObjectMapperUtil {
      * @param json             json 字符串
      * @param clazz            对象类型
      * @param parameterClasses 泛型参数类型
+     * @param <T>              要转换的对象类型
      * @return 通过反序列化得到的对象
      */
     public static <T> T transferToObject(String json, Class<?> clazz, Class<?>... parameterClasses) {
@@ -82,8 +93,15 @@ public final class ObjectMapperUtil {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(clazz, parameterClasses);
             return getObjectMapper().readValue(json, javaType);
         } catch (Exception e) {
-
-            throw new UnexpectedException("json deserialization error.", e);
+            throw new JsonException("json deserialization error.", e);
         }
     }
+
+    public static class JsonException extends RuntimeException {
+
+        JsonException(String message, Throwable e) {
+            super(message, e);
+        }
+    }
+
 }

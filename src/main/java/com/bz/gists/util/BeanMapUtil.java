@@ -2,8 +2,6 @@ package com.bz.gists.util;
 
 import com.google.common.base.CaseFormat;
 
-import com.bz.gists.exception.UnexpectedException;
-
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+
 /**
  * Created on 2019/5/23
  *
@@ -21,8 +20,14 @@ import java.util.Optional;
  */
 public final class BeanMapUtil {
 
+    /**
+     * 默认排除的字段
+     */
     private static final String DEFAULT_EXCLUDE_KEY = "class";
 
+    /**
+     * 转换的 Map 的 Key 风格
+     */
     private static KeyNameType keyNameType = KeyNameType.SNAKE;
 
     /**
@@ -81,10 +86,14 @@ public final class BeanMapUtil {
 
     /**
      * 将 Map 转化为对象
+     *
+     * @param beanMap Bean Map
+     * @param type    转换类型
+     * @param <T>     转化类型
+     * @return 转换得到的 Bean
      */
     public static <T> Optional<T> populate(Map<String, ?> beanMap, Class<T> type) {
         try {
-
             if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
                 T instance = type.newInstance();
                 BeanUtils.populate(instance, toCamelMap(beanMap));
@@ -93,12 +102,14 @@ public final class BeanMapUtil {
                 return Optional.empty();
             }
         } catch (Exception e) {
-            throw new UnexpectedException("populate fail!", e);
+            throw new BeanMapException("populate fail!", e);
         }
     }
 
     /**
      * 设置 Map 的 key 名称类型，分别有下划线（蛇形）以及驼峰。参看 {@link KeyNameType}
+     *
+     * @param keyNameType map key 风格
      */
     public static void setKeyNameType(KeyNameType keyNameType) {
         BeanMapUtil.keyNameType = keyNameType;
@@ -127,5 +138,11 @@ public final class BeanMapUtil {
 
     public enum KeyNameType {
         SNAKE, CAMEL
+    }
+
+    public static class BeanMapException extends RuntimeException {
+        BeanMapException(String message, Throwable e) {
+            super(message, e);
+        }
     }
 }
