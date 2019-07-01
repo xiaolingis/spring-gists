@@ -6,6 +6,7 @@ import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,16 +94,16 @@ public final class BeanMapUtil {
      * @return 转换得到的 Bean
      */
     public static <T> Optional<T> populate(Map<String, ?> beanMap, Class<T> type) {
-        try {
-            if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
+        if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
+            try {
                 T instance = type.newInstance();
                 BeanUtils.populate(instance, toCamelMap(beanMap));
                 return Optional.of(instance);
-            } else {
-                return Optional.empty();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new BeanMapException("populate instance fail!", e);
             }
-        } catch (Exception e) {
-            throw new BeanMapException("populate fail!", e);
+        } else {
+            return Optional.empty();
         }
     }
 
