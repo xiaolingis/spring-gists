@@ -22,6 +22,10 @@ public final class DataCacheTemplate<T> {
         return new UpdateOps<>();
     }
 
+    public UpdateAndSpecificDeleteOps<T> opsForUpdateAndSpecificDelete() {
+        return new UpdateAndSpecificDeleteOps<>();
+    }
+
     public GetOps<T> opsForGet() {
         return new GetOps<>();
     }
@@ -31,7 +35,7 @@ public final class DataCacheTemplate<T> {
 
         private Consumer<T> secondarySaveOperation;
 
-        private SaveOps(){
+        private SaveOps() {
         }
 
         public void save(T data) {
@@ -56,6 +60,45 @@ public final class DataCacheTemplate<T> {
         }
     }
 
+    public static final class UpdateAndSpecificDeleteOps<T> {
+        private Consumer<T> masterUpdateOperation;
+
+        private Runnable secondaryDeleteOperation;
+
+        public void updateAndDelete(T data) {
+            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
+            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
+            try {
+                masterUpdateOperation.accept(data);
+                secondaryDeleteOperation.run();
+            } catch (Exception e) {
+                throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
+            }
+        }
+
+        public void updateAndDoubleDelete(T data) {
+            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
+            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
+            try {
+                secondaryDeleteOperation.run();
+                masterUpdateOperation.accept(data);
+                secondaryDeleteOperation.run();
+            } catch (Exception e) {
+                throw new DataCacheOperatorException("update master data and double delete secondary data fail!", e);
+            }
+        }
+
+        public UpdateAndSpecificDeleteOps<T> withMasterUpdateOperation(Consumer<T> masterUpdateOperation) {
+            this.masterUpdateOperation = masterUpdateOperation;
+            return this;
+        }
+
+        public UpdateAndSpecificDeleteOps<T> withSecondaryDeleteOperation(Runnable secondaryDeleteOperation) {
+            this.secondaryDeleteOperation = secondaryDeleteOperation;
+            return this;
+        }
+    }
+
     public static final class UpdateOps<T> {
         private Consumer<T> masterUpdateOperation;
 
@@ -63,7 +106,7 @@ public final class DataCacheTemplate<T> {
 
         private Consumer<T> secondaryDeleteOperation;
 
-        private UpdateOps(){
+        private UpdateOps() {
         }
 
         public void updateAndUpdate(T data) {
@@ -79,7 +122,7 @@ public final class DataCacheTemplate<T> {
 
         public void updateAndDelete(T data) {
             Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryDeleteOperation, "secondary update operation is null");
+            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
             try {
                 masterUpdateOperation.accept(data);
                 secondaryDeleteOperation.accept(data);
@@ -90,7 +133,7 @@ public final class DataCacheTemplate<T> {
 
         public void updateAndDoubleDelete(T data) {
             Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryDeleteOperation, "secondary update operation is null");
+            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
             try {
                 secondaryDeleteOperation.accept(data);
                 masterUpdateOperation.accept(data);
