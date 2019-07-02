@@ -1,6 +1,5 @@
 package com.bz.gists.mybatis.handler;
 
-import com.bz.gists.util.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,7 +28,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJsonTypeHandler.class);
 
-    private ObjectMapper objectMapper = ObjectMapperUtil.getObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void setNonNullParameter(PreparedStatement preparedStatement, int i, T t, JdbcType jdbcType) throws SQLException {
