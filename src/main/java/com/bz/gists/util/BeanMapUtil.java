@@ -3,7 +3,8 @@ package com.bz.gists.util;
 import com.google.common.base.CaseFormat;
 
 import org.apache.commons.beanutils.BeanMap;
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +31,17 @@ public final class BeanMapUtil {
      * 转换的 Map 的 Key 风格
      */
     private static KeyNameType keyNameType = KeyNameType.SNAKE;
+
+    private static BeanUtilsBean beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
+        @Override
+        public Object convert(String value, Class clazz) {
+            if (clazz.isEnum()) {
+                return Enum.valueOf(clazz, value);
+            } else {
+                return super.convert(value, clazz);
+            }
+        }
+    });
 
     /**
      * 将对象转化为Map
@@ -97,7 +109,7 @@ public final class BeanMapUtil {
         if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
             try {
                 T instance = type.newInstance();
-                BeanUtils.populate(instance, toCamelMap(beanMap));
+                beanUtilsBean.populate(instance, toCamelMap(beanMap));
                 return Optional.of(instance);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new BeanMapException("populate instance fail!", e);
