@@ -32,6 +32,7 @@ public final class BeanMapUtil {
      */
     private static KeyNameType keyNameType = KeyNameType.SNAKE;
 
+    @SuppressWarnings("unchecked")
     private static BeanUtilsBean beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
         @Override
         public Object convert(String value, Class clazz) {
