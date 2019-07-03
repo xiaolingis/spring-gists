@@ -49,43 +49,13 @@ public final class DataCacheTemplate {
     /**
      * 更新数据，更新后删除备数据源的数据
      *
-     * @param data                     数据
-     * @param masterUpdateOperation    主数据源的更新操作
-     * @param secondaryDeleteOperation 备数据源的删除操作
-     * @param <T>                      数据类型
-     */
-    public static <T> void opsForUpdateAndDelete(T data, Consumer<T> masterUpdateOperation, Consumer<T> secondaryDeleteOperation) {
-        new UpdateOps<T>()
-                .withMasterUpdateOperation(masterUpdateOperation)
-                .withSecondaryDeleteOperation(secondaryDeleteOperation)
-                .updateAndDelete(data);
-    }
-
-    /**
-     * 更新数据，对备数据源进行双删操作
-     *
-     * @param data                     数据
-     * @param masterUpdateOperation    主数据源的更新操作
-     * @param secondaryDeleteOperation 备数据源的删除操作
-     * @param <T>                      数据类型
-     */
-    public static <T> void opsForUpdateAndDoubleDelete(T data, Consumer<T> masterUpdateOperation, Consumer<T> secondaryDeleteOperation) {
-        new UpdateOps<T>()
-                .withMasterUpdateOperation(masterUpdateOperation)
-                .withSecondaryDeleteOperation(secondaryDeleteOperation)
-                .updateAndDoubleDelete(data);
-    }
-
-    /**
-     * 更新数据，更新后删除备数据源的数据
-     *
      * @param data                             数据
      * @param masterUpdateOperation            主数据源的更新操作
-     * @param secondarySpecificDeleteOperation 给定详细的备数据源删除操作
+     * @param secondarySpecificDeleteOperation 备数据源的删除操作
      * @param <T>                              数据类型
      */
     public static <T> void opsForUpdateAndDelete(T data, Consumer<T> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
-        new UpdateAndSpecificDeleteOps<T>()
+        new UpdateOps<T>()
                 .withMasterUpdateOperation(masterUpdateOperation)
                 .withSecondaryDeleteOperation(secondarySpecificDeleteOperation)
                 .updateAndDelete(data);
@@ -96,11 +66,11 @@ public final class DataCacheTemplate {
      *
      * @param data                             数据
      * @param masterUpdateOperation            主数据源的更新操作
-     * @param secondarySpecificDeleteOperation 给定详细的备数据源删除操作
+     * @param secondarySpecificDeleteOperation 备数据源的删除操作
      * @param <T>                              数据类型
      */
     public static <T> void opsForUpdateAndDoubleDelete(T data, Consumer<T> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
-        new UpdateAndSpecificDeleteOps<T>()
+        new UpdateOps<T>()
                 .withMasterUpdateOperation(masterUpdateOperation)
                 .withSecondaryDeleteOperation(secondarySpecificDeleteOperation)
                 .updateAndDoubleDelete(data);
@@ -174,7 +144,7 @@ public final class DataCacheTemplate {
 
         private Consumer<T> secondaryUpdateOperation;
 
-        private Consumer<T> secondaryDeleteOperation;
+        private Runnable secondaryDeleteOperation;
 
         private UpdateOps() {
         }
@@ -195,7 +165,7 @@ public final class DataCacheTemplate {
             Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
             try {
                 masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.accept(data);
+                secondaryDeleteOperation.run();
             } catch (Exception e) {
                 throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
             }
@@ -205,9 +175,9 @@ public final class DataCacheTemplate {
             Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
             Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
             try {
-                secondaryDeleteOperation.accept(data);
+                secondaryDeleteOperation.run();
                 masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.accept(data);
+                secondaryDeleteOperation.run();
             } catch (Exception e) {
                 throw new DataCacheOperatorException("update master data and double delete secondary data fail!", e);
             }
@@ -223,46 +193,7 @@ public final class DataCacheTemplate {
             return this;
         }
 
-        UpdateOps<T> withSecondaryDeleteOperation(Consumer<T> secondaryDeleteOperation) {
-            this.secondaryDeleteOperation = secondaryDeleteOperation;
-            return this;
-        }
-    }
-
-    static final class UpdateAndSpecificDeleteOps<T> {
-        private Consumer<T> masterUpdateOperation;
-
-        private Runnable secondaryDeleteOperation;
-
-        void updateAndDelete(T data) {
-            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
-            try {
-                masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.run();
-            } catch (Exception e) {
-                throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
-            }
-        }
-
-        void updateAndDoubleDelete(T data) {
-            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
-            try {
-                secondaryDeleteOperation.run();
-                masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.run();
-            } catch (Exception e) {
-                throw new DataCacheOperatorException("update master data and double delete secondary data fail!", e);
-            }
-        }
-
-        UpdateAndSpecificDeleteOps<T> withMasterUpdateOperation(Consumer<T> masterUpdateOperation) {
-            this.masterUpdateOperation = masterUpdateOperation;
-            return this;
-        }
-
-        public UpdateAndSpecificDeleteOps<T> withSecondaryDeleteOperation(Runnable secondaryDeleteOperation) {
+        UpdateOps<T> withSecondaryDeleteOperation(Runnable secondaryDeleteOperation) {
             this.secondaryDeleteOperation = secondaryDeleteOperation;
             return this;
         }
