@@ -2,6 +2,7 @@ package com.bz.gists.util;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -17,14 +18,14 @@ public final class DataCacheTemplate {
     }
 
     /**
-     * 保存数据操作
+     * 保存数据操作。在确认主数据保存成功后才会保存到备数据源
      *
      * @param data                   数据
      * @param masterSaveOperation    主数据源的保存操作
      * @param secondarySaveOperation 备数据源的保存操作
      * @param <T>                    数据类型
      */
-    public static <T> void opsForSave(T data, Consumer<T> masterSaveOperation, Consumer<T> secondarySaveOperation) {
+    public static <T> void opsForSave(T data, Function<T, Boolean> masterSaveOperation, Consumer<T> secondarySaveOperation) {
         new SaveOps<T>()
                 .withMasterSaveOperation(masterSaveOperation)
                 .withSecondarySaveOperation(secondarySaveOperation)
@@ -32,48 +33,33 @@ public final class DataCacheTemplate {
     }
 
     /**
-     * 更新数据，同时也对备数据源进行更新操作
+     * 更新数据，采用先更后删策略
      *
      * @param data                     数据
      * @param masterUpdateOperation    主数据源的更新操作
-     * @param secondaryUpdateOperation 备数据源的更新操作
+     * @param secondaryDeleteOperation 备数据源的删除操作
      * @param <T>                      数据类型
      */
-    public static <T> void opsForUpdateAndUpdate(T data, Consumer<T> masterUpdateOperation, Consumer<T> secondaryUpdateOperation) {
+    public static <T> void opsForUpdate(T data, Consumer<T> masterUpdateOperation, Consumer<T> secondaryDeleteOperation) {
         new UpdateOps<T>()
                 .withMasterUpdateOperation(masterUpdateOperation)
-                .withSecondaryUpdateOperation(secondaryUpdateOperation)
-                .updateAndUpdate(data);
-    }
-
-    /**
-     * 更新数据，更新后删除备数据源的数据
-     *
-     * @param data                             数据
-     * @param masterUpdateOperation            主数据源的更新操作
-     * @param secondarySpecificDeleteOperation 备数据源的删除操作
-     * @param <T>                              数据类型
-     */
-    public static <T> void opsForUpdateAndDelete(T data, Consumer<T> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
-        new UpdateOps<T>()
-                .withMasterUpdateOperation(masterUpdateOperation)
-                .withSecondaryDeleteOperation(secondarySpecificDeleteOperation)
+                .withSecondaryDeleteOperation(secondaryDeleteOperation)
                 .updateAndDelete(data);
     }
 
     /**
-     * 更新数据，对备数据源进行双删操作
+     * 更新数据，采用先更后删策略
      *
      * @param data                             数据
      * @param masterUpdateOperation            主数据源的更新操作
      * @param secondarySpecificDeleteOperation 备数据源的删除操作
      * @param <T>                              数据类型
      */
-    public static <T> void opsForUpdateAndDoubleDelete(T data, Consumer<T> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
+    public static <T> void opsForUpdate(T data, Consumer<T> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
         new UpdateOps<T>()
                 .withMasterUpdateOperation(masterUpdateOperation)
-                .withSecondaryDeleteOperation(secondarySpecificDeleteOperation)
-                .updateAndDoubleDelete(data);
+                .withSecondarySpecificDeleteOperation(secondarySpecificDeleteOperation)
+                .updateAndSpecificDelete(data);
     }
 
     /**
@@ -110,7 +96,7 @@ public final class DataCacheTemplate {
     }
 
     static final class SaveOps<T> {
-        private Consumer<T> masterSaveOperation;
+        private Function<T, Boolean> masterSaveOperation;
 
         private Consumer<T> secondarySaveOperation;
 
@@ -121,14 +107,15 @@ public final class DataCacheTemplate {
             Objects.requireNonNull(masterSaveOperation, "master save operation is null");
             Objects.requireNonNull(secondarySaveOperation, "secondary save operation is null");
             try {
-                masterSaveOperation.accept(data);
-                secondarySaveOperation.accept(data);
+                if (masterSaveOperation.apply(data)) {
+                    secondarySaveOperation.accept(data);
+                }
             } catch (Exception e) {
                 throw new DataCacheOperatorException("save master data and save secondary data fail!", e);
             }
         }
 
-        SaveOps<T> withMasterSaveOperation(Consumer<T> masterSaveOperation) {
+        SaveOps<T> withMasterSaveOperation(Function<T, Boolean> masterSaveOperation) {
             this.masterSaveOperation = masterSaveOperation;
             return this;
         }
@@ -142,21 +129,21 @@ public final class DataCacheTemplate {
     static final class UpdateOps<T> {
         private Consumer<T> masterUpdateOperation;
 
-        private Consumer<T> secondaryUpdateOperation;
+        private Consumer<T> secondaryDeleteOperation;
 
-        private Runnable secondaryDeleteOperation;
+        private Runnable secondarySpecificDeleteOperation;
 
         private UpdateOps() {
         }
 
-        void updateAndUpdate(T data) {
+        void updateAndSpecificDelete(T data) {
             Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryUpdateOperation, "secondary update operation is null");
+            Objects.requireNonNull(secondarySpecificDeleteOperation, "secondary delete operation is null");
             try {
                 masterUpdateOperation.accept(data);
-                secondaryUpdateOperation.accept(data);
+                secondarySpecificDeleteOperation.run();
             } catch (Exception e) {
-                throw new DataCacheOperatorException("update master data and update secondary data fail!", e);
+                throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
             }
         }
 
@@ -165,21 +152,9 @@ public final class DataCacheTemplate {
             Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
             try {
                 masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.run();
+                secondaryDeleteOperation.accept(data);
             } catch (Exception e) {
                 throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
-            }
-        }
-
-        void updateAndDoubleDelete(T data) {
-            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
-            try {
-                secondaryDeleteOperation.run();
-                masterUpdateOperation.accept(data);
-                secondaryDeleteOperation.run();
-            } catch (Exception e) {
-                throw new DataCacheOperatorException("update master data and double delete secondary data fail!", e);
             }
         }
 
@@ -188,13 +163,13 @@ public final class DataCacheTemplate {
             return this;
         }
 
-        UpdateOps<T> withSecondaryUpdateOperation(Consumer<T> secondaryUpdateOperation) {
-            this.secondaryUpdateOperation = secondaryUpdateOperation;
+        UpdateOps<T> withSecondaryDeleteOperation(Consumer<T> secondaryDeleteOperation) {
+            this.secondaryDeleteOperation = secondaryDeleteOperation;
             return this;
         }
 
-        UpdateOps<T> withSecondaryDeleteOperation(Runnable secondaryDeleteOperation) {
-            this.secondaryDeleteOperation = secondaryDeleteOperation;
+        UpdateOps<T> withSecondarySpecificDeleteOperation(Runnable secondaryDeleteOperation) {
+            this.secondarySpecificDeleteOperation = secondaryDeleteOperation;
             return this;
         }
     }
