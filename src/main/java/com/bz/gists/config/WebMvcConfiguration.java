@@ -1,6 +1,6 @@
 package com.bz.gists.config;
 
-import com.bz.gists.rest.interceptor.ContextClearInterceptor;
+import com.bz.gists.web.interceptor.ContextClearInterceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

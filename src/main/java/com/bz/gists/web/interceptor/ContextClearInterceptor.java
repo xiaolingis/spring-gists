@@ -1,4 +1,4 @@
-package com.bz.gists.rest.interceptor;
+package com.bz.gists.web.interceptor;
 
 
 import com.bz.gists.common.Context;

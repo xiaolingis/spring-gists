@@ -1,6 +1,6 @@
-package com.bz.gists.rest.filter;
+package com.bz.gists.web.filter;
 
-import com.bz.gists.rest.advice.RequestBodyAttributeAdvice;
+import com.bz.gists.web.advice.RequestBodyAttributeAdvice;
 import com.bz.gists.util.LogUtil;
 
 import org.slf4j.Logger;

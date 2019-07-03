@@ -1,4 +1,4 @@
-package com.bz.gists.rest.advice;
+package com.bz.gists.web.advice;
 
 import com.bz.gists.common.Constants;
 
