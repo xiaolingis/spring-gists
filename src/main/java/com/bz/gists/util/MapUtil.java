@@ -2,6 +2,7 @@ package com.bz.gists.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created on 2019/5/23
@@ -11,22 +12,43 @@ import java.util.Map;
 public final class MapUtil {
 
     /**
-     * 将 Map 的 Key 和 Value 都转换为字符串
+     * 转换 Map 的键的类型
+     *
+     * @param map                需要转换的 map
+     * @param keyConvertFunction 键类型转换方法
+     * @param <K>                键要转换的类型
+     * @return 转换后得到的新的 Map
      */
-    public static Map<String, String> toStringMap(Map<?, ?> map) {
-        Map<String, String> stringMap = new HashMap<>(map.size());
-        map.forEach((k, v) -> stringMap.put(String.valueOf(k), String.valueOf(v)));
-
-        return stringMap;
+    public static <K> Map<K, ?> convertMapKeyType(Map<?, ?> map, Function<Object, K> keyConvertFunction) {
+        return convertMapType(map, keyConvertFunction, Function.identity());
     }
 
     /**
-     * 将 Map 的 Key 转换为字符串
+     * 转换 Map 的键的类型
+     *
+     * @param map                  需要转换的 map
+     * @param valueConvertFunction 值类型转换方法
+     * @param <V>                  键要转换的类型
+     * @return 转换后得到的新的 Map
      */
-    public static Map<String, Object> toStringKeyMap(Map<?, ?> map) {
-        Map<String, Object> stringKeyMap = new HashMap<>(map.size());
-        map.forEach((k, v) -> stringKeyMap.put(String.valueOf(k), v));
+    public static <V> Map<?, V> convertMapValueType(Map<?, ?> map, Function<Object, V> valueConvertFunction) {
+        return convertMapType(map, Function.identity(), valueConvertFunction);
+    }
 
-        return stringKeyMap;
+    /**
+     * 将 Map 的键与值的类型进行转换
+     *
+     * @param map                  需要转换的 Map
+     * @param keyConvertFunction   键类型转换方法
+     * @param valueConvertFunction 值类型转换方法
+     * @param <K>                  键要转换的类型
+     * @param <V>                  值要转换的类型
+     * @return 转换后得到的新的 Map
+     */
+    public static <K, V> Map<K, V> convertMapType(Map<?, ?> map, Function<Object, K> keyConvertFunction, Function<Object, V> valueConvertFunction) {
+        Map<K, V> newMap = new HashMap<>(map.size());
+        map.forEach((k, v) -> newMap.put(keyConvertFunction.apply(k), valueConvertFunction.apply(v)));
+
+        return newMap;
     }
 }
