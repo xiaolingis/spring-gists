@@ -139,7 +139,7 @@ public final class DataCacheTemplate {
         return opsForGet(secondaryGetOperation, masterGetOperation, null);
     }
 
-    public static final class SaveOps<T> {
+    static final class SaveOps<T> {
         private Consumer<T> masterSaveOperation;
 
         private Consumer<T> secondarySaveOperation;
@@ -169,7 +169,7 @@ public final class DataCacheTemplate {
         }
     }
 
-    public static final class UpdateOps<T> {
+    static final class UpdateOps<T> {
         private Consumer<T> masterUpdateOperation;
 
         private Consumer<T> secondaryUpdateOperation;
@@ -229,7 +229,7 @@ public final class DataCacheTemplate {
         }
     }
 
-    public static final class UpdateAndSpecificDeleteOps<T> {
+    static final class UpdateAndSpecificDeleteOps<T> {
         private Consumer<T> masterUpdateOperation;
 
         private Runnable secondaryDeleteOperation;
@@ -268,7 +268,7 @@ public final class DataCacheTemplate {
         }
     }
 
-    public static final class GetOps<T> {
+    static final class GetOps<T> {
 
         private Supplier<T> masterGetOperation;
         private Supplier<T> secondaryGetOperation;
