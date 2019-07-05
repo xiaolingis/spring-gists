@@ -3,8 +3,7 @@ package com.bz.gists.util;
 import com.google.common.base.CaseFormat;
 
 import org.apache.commons.beanutils.BeanMap;
-import org.apache.commons.beanutils.BeanUtilsBean;
-import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,18 +31,6 @@ public final class BeanMapUtil {
      */
     private static KeyNameType keyNameType = KeyNameType.SNAKE;
 
-    @SuppressWarnings("unchecked")
-    private static BeanUtilsBean beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
-        @Override
-        public Object convert(String value, Class clazz) {
-            if (clazz.isEnum()) {
-                return Enum.valueOf(clazz, value);
-            } else {
-                return super.convert(value, clazz);
-            }
-        }
-    });
-
     /**
      * 将对象转化为Map
      *
@@ -55,7 +42,7 @@ public final class BeanMapUtil {
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && Arrays.stream(excludedProperties).noneMatch(attr -> StringUtils.equals(attr, key))) {
-                map.put(keyName(key), String.valueOf(v));
+                map.put(keyName(key), v);
             }
         });
 
@@ -73,7 +60,7 @@ public final class BeanMapUtil {
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.startsWith(key, excludedPropertiesPrefix)) {
-                map.put(keyName(key), String.valueOf(v));
+                map.put(keyName(key), v);
             }
         });
 
@@ -91,7 +78,7 @@ public final class BeanMapUtil {
         new BeanMap(bean).forEach((k, v) -> {
             String key = String.valueOf(k);
             if (!StringUtils.equals(DEFAULT_EXCLUDE_KEY, key) && !StringUtils.endsWith(key, excludedPropertiesSuffix)) {
-                map.put(keyName(key), String.valueOf(v));
+                map.put(keyName(key), v);
             }
         });
 
@@ -110,7 +97,7 @@ public final class BeanMapUtil {
         if (Objects.nonNull(beanMap) && beanMap.size() > 0) {
             try {
                 T instance = type.newInstance();
-                beanUtilsBean.populate(instance, toCamelMap(beanMap));
+                BeanUtils.populate(instance, toCamelMap(beanMap));
                 return Optional.of(instance);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new BeanMapException("populate instance fail!", e);
