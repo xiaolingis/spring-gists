@@ -1,4 +1,4 @@
-package com.bz.gists.mybatis.handler;
+package com.bz.gists.mybatis.typehandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
