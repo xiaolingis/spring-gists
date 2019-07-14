@@ -63,6 +63,50 @@ public final class DataCacheTemplate {
     }
 
     /**
+     * 更新数据，采用先更后删策略。如果更新数据没有成功，则不删除数据
+     *
+     * @param data                     数据
+     * @param masterUpdateOperation    主数据源的更新操作
+     * @param secondaryDeleteOperation 备数据源的删除操作
+     * @param <T>                      数据类型
+     */
+    public static <T> void opsForUpdate(T data, Function<T, Boolean> masterUpdateOperation, Consumer<T> secondaryDeleteOperation) {
+        new UpdateOps<T>()
+                .withMasterUpdateConfirmOperation(masterUpdateOperation)
+                .withSecondaryDeleteOperation(secondaryDeleteOperation)
+                .updateAndDelete(data);
+    }
+
+    /**
+     * 更新数据，采用先更后删策略。如果更新数据没有成功，则不删除数据
+     *
+     * @param data                             数据
+     * @param masterUpdateOperation            主数据源的更新操作
+     * @param secondarySpecificDeleteOperation 备数据源的删除操作
+     * @param <T>                              数据类型
+     */
+    public static <T> void opsForUpdate(T data, Function<T, Boolean> masterUpdateOperation, Runnable secondarySpecificDeleteOperation) {
+        new UpdateOps<T>()
+                .withMasterUpdateConfirmOperation(masterUpdateOperation)
+                .withSecondarySpecificDeleteOperation(secondarySpecificDeleteOperation)
+                .updateAndSpecificDelete(data);
+    }
+
+    /**
+     * 获取数据。先从备数据源中获取数据，获取不到的话再从主数据源中获取
+     *
+     * @param secondaryGetOperation 从备数据源中获取数据操作
+     * @param masterGetOperation    从主数据源中获取数据操作
+     * @param <T>                   数据类型
+     * @return 获取的数据，如果主数据源中也没有对应的数据，将返回空
+     */
+    public static <T> T opsForGet(Supplier<T> secondaryGetOperation,
+                                  Supplier<T> masterGetOperation
+    ) {
+        return opsForGet(secondaryGetOperation, masterGetOperation, null);
+    }
+
+    /**
      * 获取数据。先从备数据源中获取数据，获取不到的话再从主数据源中获取，之后会根据是否给定备数据源的保存操作来确定是否将数据保存到备数据源中
      *
      * @param secondaryGetOperation  从备数据源中获取数据操作
@@ -79,20 +123,6 @@ public final class DataCacheTemplate {
                 .withMasterGetOperation(masterGetOperation)
                 .withSecondarySaveOperation(secondarySaveOperation)
                 .get();
-    }
-
-    /**
-     * 获取数据。先从备数据源中获取数据，获取不到的话再从主数据源中获取
-     *
-     * @param secondaryGetOperation 从备数据源中获取数据操作
-     * @param masterGetOperation    从主数据源中获取数据操作
-     * @param <T>                   数据类型
-     * @return 获取的数据，如果主数据源中也没有对应的数据，将返回空
-     */
-    public static <T> T opsForGet(Supplier<T> secondaryGetOperation,
-                                  Supplier<T> masterGetOperation
-    ) {
-        return opsForGet(secondaryGetOperation, masterGetOperation, null);
     }
 
     static final class SaveOps<T> {
@@ -129,22 +159,13 @@ public final class DataCacheTemplate {
     static final class UpdateOps<T> {
         private Consumer<T> masterUpdateOperation;
 
+        private Function<T, Boolean> masterUpdateConfirmOperation;
+
         private Consumer<T> secondaryDeleteOperation;
 
         private Runnable secondarySpecificDeleteOperation;
 
         private UpdateOps() {
-        }
-
-        void updateAndSpecificDelete(T data) {
-            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
-            Objects.requireNonNull(secondarySpecificDeleteOperation, "secondary delete operation is null");
-            try {
-                masterUpdateOperation.accept(data);
-                secondarySpecificDeleteOperation.run();
-            } catch (Exception e) {
-                throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
-            }
         }
 
         void updateAndDelete(T data) {
@@ -158,8 +179,48 @@ public final class DataCacheTemplate {
             }
         }
 
+        void updateAndSpecificDelete(T data) {
+            Objects.requireNonNull(masterUpdateOperation, "master update operation is null");
+            Objects.requireNonNull(secondarySpecificDeleteOperation, "secondary delete operation is null");
+            try {
+                masterUpdateOperation.accept(data);
+                secondarySpecificDeleteOperation.run();
+            } catch (Exception e) {
+                throw new DataCacheOperatorException("update master data and delete secondary data fail!", e);
+            }
+        }
+
+        void updateConfirmAndDelete(T data) {
+            Objects.requireNonNull(masterUpdateConfirmOperation, "master confirm update operation is null");
+            Objects.requireNonNull(secondaryDeleteOperation, "secondary delete operation is null");
+            try {
+                if (masterUpdateConfirmOperation.apply(data)) {
+                    secondaryDeleteOperation.accept(data);
+                }
+            } catch (Exception e) {
+                throw new DataCacheOperatorException("update master data confirm and delete secondary data fail!", e);
+            }
+        }
+
+        void updateConfirmAndSpecificDelete(T data) {
+            Objects.requireNonNull(masterUpdateConfirmOperation, "master confirm update operation is null");
+            Objects.requireNonNull(secondarySpecificDeleteOperation, "secondary delete operation is null");
+            try {
+                if (masterUpdateConfirmOperation.apply(data)) {
+                    secondarySpecificDeleteOperation.run();
+                }
+            } catch (Exception e) {
+                throw new DataCacheOperatorException("update master data confirm and delete secondary data fail!", e);
+            }
+        }
+
         UpdateOps<T> withMasterUpdateOperation(Consumer<T> masterUpdateOperation) {
             this.masterUpdateOperation = masterUpdateOperation;
+            return this;
+        }
+
+        UpdateOps<T> withMasterUpdateConfirmOperation(Function<T, Boolean> masterUpdateConfirmOperation) {
+            this.masterUpdateConfirmOperation = masterUpdateConfirmOperation;
             return this;
         }
 

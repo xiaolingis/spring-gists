@@ -62,4 +62,4 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
-  type-handlers-package: com.bz.gists.mybatis.handler
+  type-handlers-package: com.bz.gists.mybatis.typehandler

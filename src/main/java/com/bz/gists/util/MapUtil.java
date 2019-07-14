@@ -17,9 +17,11 @@ public final class MapUtil {
      * @param map                需要转换的 map
      * @param keyConvertFunction 键类型转换方法
      * @param <K>                键要转换的类型
+     * @param <OK>               待转换 map 的键类型
+     * @param <OV>               待转换 map 的值类型
      * @return 转换后得到的新的 Map
      */
-    public static <K> Map<K, ?> convertMapKeyType(Map<?, ?> map, Function<Object, K> keyConvertFunction) {
+    public static <K, OK, OV> Map<K, OV> convertMapKeyType(Map<OK, OV> map, Function<OK, K> keyConvertFunction) {
         return convertMapType(map, keyConvertFunction, Function.identity());
     }
 
@@ -29,9 +31,11 @@ public final class MapUtil {
      * @param map                  需要转换的 map
      * @param valueConvertFunction 值类型转换方法
      * @param <V>                  键要转换的类型
+     * @param <OK>                 待转换 map 的键类型
+     * @param <OV>                 待转换 map 的值类型
      * @return 转换后得到的新的 Map
      */
-    public static <V> Map<?, V> convertMapValueType(Map<?, ?> map, Function<Object, V> valueConvertFunction) {
+    public static <V, OK, OV> Map<OK, V> convertMapValueType(Map<OK, OV> map, Function<OV, V> valueConvertFunction) {
         return convertMapType(map, Function.identity(), valueConvertFunction);
     }
 
@@ -43,9 +47,11 @@ public final class MapUtil {
      * @param valueConvertFunction 值类型转换方法
      * @param <K>                  键要转换的类型
      * @param <V>                  值要转换的类型
+     * @param <OK>                 待转换 map 的键类型
+     * @param <OV>                 待转换 map 的值类型
      * @return 转换后得到的新的 Map
      */
-    public static <K, V> Map<K, V> convertMapType(Map<?, ?> map, Function<Object, K> keyConvertFunction, Function<Object, V> valueConvertFunction) {
+    public static <K, V, OK, OV> Map<K, V> convertMapType(Map<OK, OV> map, Function<OK, K> keyConvertFunction, Function<OV, V> valueConvertFunction) {
         Map<K, V> newMap = new HashMap<>(map.size());
         map.forEach((k, v) -> newMap.put(keyConvertFunction.apply(k), valueConvertFunction.apply(v)));
 
