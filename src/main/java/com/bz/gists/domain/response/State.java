@@ -14,5 +14,10 @@ public enum State {
     /**
      * 失败
      */
-    FAIL
+    FAIL,
+
+    /**
+     * 无效
+     */
+    INVALID
 }

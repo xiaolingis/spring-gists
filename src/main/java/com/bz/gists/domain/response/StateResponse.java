@@ -26,6 +26,10 @@ public class StateResponse {
         return new StateResponse().withState(State.FAIL);
     }
 
+    public static StateResponse ofInvalid() {
+        return new StateResponse().withState(State.INVALID);
+    }
+
     public StateResponse withMessage(String message) {
         this.message = message;
         return this;
