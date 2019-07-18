@@ -28,7 +28,7 @@ public abstract class AbstractCache implements ICache {
         this.order = order;
     }
 
-    protected final boolean updateMaxUpdateTime(long modifyTimestamp) {
+    protected final boolean updateModifyTime(long modifyTimestamp) {
         if (modifyTimestamp != lastMaxModifyTime) {
             lastMaxModifyTime = modifyTimestamp;
             return true;
