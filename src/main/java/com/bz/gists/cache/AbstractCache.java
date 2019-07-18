@@ -11,7 +11,7 @@ public abstract class AbstractCache implements ICache {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCache.class);
 
-    private long lastMaxModifyTime;
+    private long lastMaxModifyTime = Long.MIN_VALUE;
 
     private String cacheName;
 
@@ -29,7 +29,7 @@ public abstract class AbstractCache implements ICache {
     }
 
     protected final boolean updateMaxUpdateTime(long modifyTimestamp) {
-        if (modifyTimestamp > lastMaxModifyTime) {
+        if (modifyTimestamp != lastMaxModifyTime) {
             lastMaxModifyTime = modifyTimestamp;
             return true;
         }
