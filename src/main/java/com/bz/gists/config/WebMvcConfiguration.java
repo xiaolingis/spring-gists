@@ -1,9 +1,10 @@
 package com.bz.gists.config;
 
-import com.bz.gists.web.interceptor.ContextClearInterceptor;
+import com.bz.gists.web.filter.CachingRequestFilter;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
@@ -12,8 +13,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new ContextClearInterceptor());
+
+    @Bean
+    public FilterRegistrationBean<CachingRequestFilter> filterFilterRegistrationBean(CachingRequestFilter filter) {
+        FilterRegistrationBean<CachingRequestFilter> filterFilterRegistrationBean = new FilterRegistrationBean<>(filter);
+        filterFilterRegistrationBean.addUrlPatterns("/*");
+        return filterFilterRegistrationBean;
     }
 }

@@ -1,6 +1,7 @@
 package com.bz.gists.web.advice;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 
 import com.bz.gists.domain.response.StateResponse;
 import com.bz.gists.exception.ForbiddenException;
@@ -9,6 +10,7 @@ import com.bz.gists.exception.NotFoundException;
 import com.bz.gists.exception.UnexpectedException;
 import com.bz.gists.util.ObjectMapperUtil;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -22,9 +24,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
@@ -64,11 +71,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> unexpectedExceptionHandler(Throwable ex, HttpServletRequest request) {
-        LOGGER.error("unexpected exception occur, uri:[{}], params:[{}], request body:[{}], stacktrace:",
-                request.getRequestURI(),
-                ObjectMapperUtil.transferToString(request.getParameterMap()),
-                request.getAttribute(RequestBodyAttributeAdvice.REQUEST_BODY_ATTRIBUTE_NAME),
-                ex);
+        LOGGER.error("unexpected exception occur, request data: \n[{}]\n, stacktrace:",
+                ObjectMapperUtil.transferToStringPretty(new LinkedHashMap<String, Object>() {{
+                    this.put("uri", request.getRequestURI());
+                    this.put("headers", getHeadersInfo(request));
+                    this.put("params", request.getParameterMap());
+                    this.put("body", getRequestBody(request));
+                }}), ex);
         ResponseEntity<Object> responseEntity;
         if (ex instanceof UnexpectedException) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StateResponse.ofFail().withMessage(ex.getMessage()));
@@ -98,5 +107,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         body = Optional.ofNullable(body).orElse(StateResponse.ofFail().withMessage(status.getReasonPhrase()));
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    private Map<String, String> getHeadersInfo(HttpServletRequest request) {
+        Map<String, String> headersInfo = Maps.newHashMap();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = headerNames.nextElement();
+            String value = request.getHeader(key);
+            headersInfo.put(key, value);
+        }
+
+        return headersInfo;
+    }
+
+    private String getRequestBody(HttpServletRequest request) {
+        try {
+            ServletInputStream inputStream = request.getInputStream();
+            return inputStream.isFinished() ? "error: cannot read repeatedly" : IOUtils.toString(inputStream);
+        } catch (IOException e) {
+            return "error: read body fail";
+        }
     }
 }
