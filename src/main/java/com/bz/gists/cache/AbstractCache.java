@@ -29,7 +29,7 @@ public abstract class AbstractCache implements ICache {
     }
 
     protected final boolean updateModifyTime(long modifyTimestamp) {
-        if (modifyTimestamp != lastMaxModifyTime) {
+        if (modifyTimestamp > lastMaxModifyTime) {
             lastMaxModifyTime = modifyTimestamp;
             return true;
         }
