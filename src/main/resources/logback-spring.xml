@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <property name="PROJECT_PACKAGE" value="com.bz.gists"/>
     <property name="LOG_PATH" value="${LOG_PATH:-/data/logs/${appName}}"/>
     <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH}/${appName}.log}"/>
     <property name="CHAR_SET" value="UTF-8"/>
@@ -52,9 +53,9 @@
     </appender>
 
     <appender name="DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/debug/debug.log</file>
+        <file>${LOG_PATH}/debug/debug.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/debug/debug.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/debug/debug.%d{yyyy-MM-dd-HH}.log</fileNamePattern>
             <maxHistory>12</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
@@ -77,7 +78,7 @@
     <logger name="org.springframework.boot.web.support.ErrorPageFilter" level="OFF"/>
 
     <springProfile name="dev">
-        <logger name="com.bz.gists" level="DEBUG"/>
+        <logger name="${PROJECT_PACKAGE}" level="DEBUG"/>
         <logger name="org.springframework" level="INFO"/>
         <logger name="com.zaxxer.hikari" level="WARN"/>
         <root level="DEBUG">
@@ -92,7 +93,7 @@
     </springProfile>
 
     <springProfile name="!dev">
-        <logger name="com.bz.gists" level="INFO"/>
+        <logger name="${PROJECT_PACKAGE}" level="INFO"/>
         <logger name="org.springframework" level="WARN"/>
         <root level="INFO">
             <appender-ref ref="FILE"/>
