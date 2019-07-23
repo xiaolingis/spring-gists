@@ -18,7 +18,7 @@ import static org.apache.ibatis.io.Resources.getResourceAsStream;
  */
 public final class MapperGenerator {
 
-    private static final String CONFIG_FILE = "tk/generatorConfig.xml";
+    private static final String CONFIG_FILE = "generatorConfig.xml";
 
     private static final String GENERATED_SOURCES = "generated-sources";
 
