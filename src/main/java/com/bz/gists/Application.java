@@ -1,7 +1,5 @@
 package com.bz.gists;
 
-import com.bz.gists.util.ProfileUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +8,12 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created on 2019/1/19
@@ -23,38 +27,36 @@ public class Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
-    public static void main(final String[] args) throws Exception {
-        final SpringApplication app = new SpringApplication(Application.class);
-        final Environment env = app.run(args).getEnvironment();
-        ProfileUtil.addEnvironment(env);
+    private final Environment env;
 
-        log();
+    public Application(Environment env) {
+        this.env = env;
     }
 
-    private static void log() throws Exception {
-        StringBuilder log = new StringBuilder();
-        log.append("\n----------------------------------------------------------\n\t");
-        log.append("Running with spring profile: {}\n\t");
-        log.append("Application '{}' is running! Access URLs:\n\t");
-        log.append("Local: \t\thttp://127.0.0.1:{}\n\t");
-        log.append("External: \t{}");
-        log.append("\n----------------------------------------------------------");
+    /**
+     * Main method, used to run the application.
+     *
+     * @param args the command line arguments
+     * @throws UnknownHostException if the local host name could not be resolved into an address
+     */
+    public static void main(final String[] args) throws UnknownHostException {
+        final SpringApplication app = new SpringApplication(Application.class);
+        final Environment env = app.run(args).getEnvironment();
+        final String port = env.getProperty("server.port");
+        final String[] profiles = env.getActiveProfiles();
 
-        StringBuilder externalAddress = new StringBuilder();
-        String[] hostAddresses = ProfileUtil.getHostAddresses();
-        for (int i = 0; i < hostAddresses.length; i++) {
-            if (i != 0) {
-                externalAddress.append("            ");
-            }
-            externalAddress.append(String.format("http://%s:%s", hostAddresses[i], ProfileUtil.getServerPort()));
-            if (i != hostAddresses.length - 1) {
-                externalAddress.append("\n\t");
-            }
-        }
-        LOGGER.info(log.toString(),
-                ProfileUtil.getActiveProfile(),
-                ProfileUtil.getApplicationName(),
-                ProfileUtil.getServerPort(),
-                externalAddress.toString());
+        LOGGER.info("\n----------------------------------------------------------\n\t" + "Application '{}' is running! Access URLs:\n\t" + "Local: \t\thttp://127.0.0.1:{}\n\t"
+                + "External: \thttp://{}:{}\n\t" + "Profile(s): \t{}\n----------------------------------------------------------", env
+                .getProperty("spring.application.name"), port, InetAddress.getLocalHost().getHostAddress(), port, profiles);
+    }
+
+    /**
+     * Initializes application.
+     * <p>
+     * Spring profiles can be configured with a program arguments --spring.profiles.active=your-active-profile
+     */
+    @PostConstruct
+    public void initApplication() {
+        LOGGER.info("Running with Spring profile(s) : {}", Arrays.toString(env.getActiveProfiles()));
     }
 }
