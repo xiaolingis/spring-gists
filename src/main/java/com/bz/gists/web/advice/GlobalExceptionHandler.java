@@ -88,27 +88,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return responseEntity;
     }
 
-    /**
-     * 参数验证错误处理
-     */
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        BindingResult bindingResult = ex.getBindingResult();
-        String message = Joiner.on(",").join(
-                bindingResult.getAllErrors()
-                        .stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .collect(Collectors.toList())
-        );
-        return handleExceptionInternal(ex, StateResponse.ofFail().withMessage(message), headers, status, request);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        body = Optional.ofNullable(body).orElse(StateResponse.ofFail().withMessage(status.getReasonPhrase()));
-        return super.handleExceptionInternal(ex, body, headers, status, request);
-    }
-
     private Map<String, String> getHeadersInfo(HttpServletRequest request) {
         Map<String, String> headersInfo = Maps.newHashMap();
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -128,5 +107,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         } catch (IOException e) {
             return "error: read body fail";
         }
+    }
+
+    /**
+     * 参数验证错误处理
+     */
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        BindingResult bindingResult = ex.getBindingResult();
+        String message = Joiner.on(",").join(
+                bindingResult.getAllErrors()
+                        .stream()
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .collect(Collectors.toList())
+        );
+        return handleExceptionInternal(ex, StateResponse.ofFail().withMessage(message), headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        body = Optional.ofNullable(body).orElse(StateResponse.ofFail().withMessage(status.getReasonPhrase()));
+        return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 }

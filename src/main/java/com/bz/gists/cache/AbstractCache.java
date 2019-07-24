@@ -11,7 +11,7 @@ public abstract class AbstractCache implements ICache {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCache.class);
 
-    private long lastMaxModifyTime = Long.MIN_VALUE;
+    private volatile long lastMaxModifyTime = Long.MIN_VALUE;
 
     private String cacheName;
 
@@ -28,12 +28,19 @@ public abstract class AbstractCache implements ICache {
         this.order = order;
     }
 
-    protected final boolean updateModifyTime(long modifyTimestamp) {
+    /**
+     * 更新数据的最后更改时间，用于判断是否需要刷新缓存
+     *
+     * @param modifyTimestamp 更改时间
+     * @return true: 最后更改时间发生变化 ; false: 最后更改时间没有变化
+     */
+    protected final boolean updateLastModifyTime(long modifyTimestamp) {
         if (modifyTimestamp > lastMaxModifyTime) {
             lastMaxModifyTime = modifyTimestamp;
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public final long getLastMaxModifyTime() {
