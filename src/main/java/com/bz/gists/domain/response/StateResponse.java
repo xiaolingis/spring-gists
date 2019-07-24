@@ -13,6 +13,8 @@ public class StateResponse {
 
     private String message;
 
+    private long timestamp = System.currentTimeMillis();
+
     public static StateResponse ofSuccess() {
         return new StateResponse().withState(State.SUCCESS);
     }
@@ -41,5 +43,9 @@ public class StateResponse {
 
     public String getMessage() {
         return message;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }
