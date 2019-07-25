@@ -72,6 +72,13 @@ public final class TemporalUtil {
     }
 
     /**
+     * Date 格式化为字符串
+     */
+    public static String dateToString(Date date, DateTimeFormatter formatter) {
+        return formatter.format(dateToTemporal(date));
+    }
+
+    /**
      * 字符串转化为日期
      */
     public static LocalDate stringToLocalDate(String strTime, DateTimeFormatter formatter) {
@@ -83,6 +90,13 @@ public final class TemporalUtil {
      */
     public static LocalDateTime stringToLocalDateTime(String strTime, DateTimeFormatter formatter) {
         return LocalDateTime.parse(strTime, formatter);
+    }
+
+    /**
+     * 字符串转化为 Date
+     */
+    public static Date stringToDate(String strTime, DateTimeFormatter formatter) {
+        return temporalToDate(stringToLocalDateTime(strTime, formatter));
     }
 
     /**
