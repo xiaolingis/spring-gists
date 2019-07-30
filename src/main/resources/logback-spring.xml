@@ -82,10 +82,7 @@
         <logger name="org.springframework" level="INFO"/>
         <logger name="com.zaxxer.hikari" level="WARN"/>
         <root level="DEBUG">
-            <appender-ref ref="CONSOLE"/>
             <appender-ref ref="DEBUG"/>
-        </root>
-        <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
             <appender-ref ref="ERROR"/>
