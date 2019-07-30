@@ -121,6 +121,13 @@ public final class TemporalUtil {
     }
 
     /**
+     * Java 8 时间转化为时间戳
+     */
+    public static long temporalToTimestamp(LocalDateTime dateTime) {
+        return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    /**
      * 获取指定日期的最大时间，如 2019-06-24 23:59:59.999999
      */
     public static LocalDateTime getMaxDateTime(LocalDateTime dateTime) {
