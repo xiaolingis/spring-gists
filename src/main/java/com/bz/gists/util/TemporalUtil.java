@@ -205,6 +205,13 @@ public final class TemporalUtil {
     }
 
     /**
+     * 计算两个时间相差的天数
+     */
+    public static long betweenDays(LocalDate startInclusive, LocalDate endExclusive) {
+        return Period.between(startInclusive, endExclusive).getDays();
+    }
+
+    /**
      * 计算两个日期相差的周数
      */
     public static long betweenWeeks(LocalDate startInclusive, LocalDate endExclusive) {
