@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.ParameterizedType;
@@ -14,7 +12,6 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Created on 2019/7/10
@@ -22,8 +19,6 @@ import java.util.Optional;
  * @author zhongyongbin
  */
 public abstract class AbstractCacheRedis<T> extends AbstractRedis {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCacheRedis.class);
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -33,13 +28,9 @@ public abstract class AbstractCacheRedis<T> extends AbstractRedis {
      *
      * @param key Redis 键
      */
-    protected final Optional<T> getInternal(String key) {
+    protected final T getInternal(String key) {
         String value = redisTemplate.opsForValue().get(key);
-        if (StringUtils.isBlank(value)) {
-            return Optional.empty();
-        } else {
-            return Optional.ofNullable(fromJson(value));
-        }
+        return StringUtils.isBlank(value) ? null : fromJson(value);
     }
 
     private T fromJson(String json) {
@@ -99,6 +90,32 @@ public abstract class AbstractCacheRedis<T> extends AbstractRedis {
             LOGGER.error("json serialize fail!", e);
             return null;
         }
+    }
+
+    /**
+     * 保存数据实体。在保存时，会将实体转化为 Map 再序列化成 JSON ，防止受实体类的 JsonIgnore 影响
+     *
+     * @param key                      Redis 键
+     * @param entity                   实体
+     * @param timeout                  Redis 键过期时间
+     * @param excludedPropertiesPrefix 实体不需要保存的属性前缀
+     */
+    protected final void saveInternalExcludePropertiesPrefix(String key, T entity, Duration timeout, String excludedPropertiesPrefix) {
+        String data = toJson(BeanMapUtil.describeExcludedPropertiesPrefix(entity, excludedPropertiesPrefix));
+        redisTemplate.opsForValue().set(key, StringUtils.isNotBlank(data) ? data : "", timeout);
+    }
+
+    /**
+     * 保存数据实体。在保存时，会将实体转化为 Map 再序列化成 JSON ，防止受实体类的 JsonIgnore 影响
+     *
+     * @param key                      Redis 键
+     * @param entity                   实体
+     * @param timeout                  Redis 键过期时间
+     * @param excludedPropertiesSuffix 实体不需要保存的属性后缀
+     */
+    protected final void saveInternalExcludePropertiesSuffix(String key, T entity, Duration timeout, String excludedPropertiesSuffix) {
+        String data = toJson(BeanMapUtil.describeExcludedPropertiesSuffix(entity, excludedPropertiesSuffix));
+        redisTemplate.opsForValue().set(key, StringUtils.isNotBlank(data) ? data : "", timeout);
     }
 
     /**
