@@ -10,8 +10,10 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +37,7 @@ public class MpGenerator {
         strategyConfig(mpg);
         packageConfig(mpg);
         templateConfig(mpg);
+        mpg.execute();
     }
 
     /**
@@ -46,7 +49,7 @@ public class MpGenerator {
         gc.setFileOverride(true);
         gc.setActiveRecord(false);
         gc.setEnableCache(false);
-//        gc.setBaseResultMap(true);
+        gc.setBaseResultMap(true);
         gc.setBaseColumnList(false);
         gc.setAuthor(GlobalConfigConstants.AUTHOR);
 
@@ -54,6 +57,8 @@ public class MpGenerator {
         gc.setXmlName(GlobalConfigConstants.XML_MAPPER_NAME);
 
         gc.setIdType(GlobalConfigConstants.ID_TYPE);
+
+        gc.setDateType(DateType.ONLY_DATE);
 
         mpg.setGlobalConfig(gc);
     }
@@ -91,6 +96,8 @@ public class MpGenerator {
         if (Objects.nonNull(StrategyConfigConstants.EXCLUDE) && StrategyConfigConstants.EXCLUDE.length > 0) {
             strategy.setExclude(StrategyConfigConstants.EXCLUDE);
         }
+
+        mpg.setStrategy(strategy);
     }
 
     /**
@@ -121,7 +128,7 @@ public class MpGenerator {
 
     static class GlobalConfigConstants {
 
-        static final String OUTPUT_DIR = System.getProperty("user.dir");
+        static final String OUTPUT_DIR = System.getProperty("user.dir") + File.separator + "generated-sources";
 
         static final String AUTHOR = "Mybatis-Plus Generator";
 
@@ -142,15 +149,15 @@ public class MpGenerator {
 
         static final String PASSWORD = "root";
 
-        static final String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/test?characterEncoding=utf8";
+        static final String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/test_database?characterEncoding=utf8";
     }
 
     static class StrategyConfigConstants {
         static final String[] TABLE_PREFIX = new String[]{};
 
         static final List<TableFill> TABLE_FILL_LIST = new ArrayList<TableFill>() {{
-            this.add(new TableFill("createTime", FieldFill.INSERT));
-            this.add(new TableFill("updateTime", FieldFill.INSERT_UPDATE));
+            this.add(new TableFill("create_time", FieldFill.INSERT));
+            this.add(new TableFill("update_time", FieldFill.INSERT_UPDATE));
         }};
 
         static final String[] INCLUDE = new String[]{};

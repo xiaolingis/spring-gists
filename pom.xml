@@ -28,7 +28,7 @@
         <tk.mybatis.version>2.1.4</tk.mybatis.version>
         <pagehelper.version>1.2.11</pagehelper.version>
         <ttl.version>2.10.2</ttl.version>
-        <mybatis-plus.version>3.1.2</mybatis-plus.version>
+        <mybatis-plus.version>3.0.5</mybatis-plus.version>
     </properties>
 
     <dependencies>
@@ -145,6 +145,13 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-generator</artifactId>
             <version>${mybatis-plus.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
