@@ -25,7 +25,7 @@ public class RangeConditionJsonComponent {
 
         @Override
         public void serialize(RangeCondition value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeNumber(RangeConditionHelper.conditionToString(value));
+            gen.writeString(RangeConditionHelper.conditionToString(value));
         }
     }
 
