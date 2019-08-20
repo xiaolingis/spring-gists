@@ -7,9 +7,9 @@ import org.springframework.util.StopWatch;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class AbstractCache implements ICache {
+public abstract class AbstractLocalCache implements ILocalCache {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCache.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractLocalCache.class);
 
     private volatile long lastMaxModifyTime = Long.MIN_VALUE;
 
@@ -19,11 +19,11 @@ public abstract class AbstractCache implements ICache {
 
     private final AtomicLong version = new AtomicLong(0);
 
-    public AbstractCache(String cacheName) {
+    public AbstractLocalCache(String cacheName) {
         this(cacheName, Ordered.LOWEST_PRECEDENCE);
     }
 
-    public AbstractCache(String cacheName, int order) {
+    public AbstractLocalCache(String cacheName, int order) {
         this.cacheName = cacheName;
         this.order = order;
     }

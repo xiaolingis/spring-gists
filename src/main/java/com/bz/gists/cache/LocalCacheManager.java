@@ -18,18 +18,18 @@ import javax.annotation.PostConstruct;
  * @author zhongyongbin
  */
 @Component
-public final class CacheFactory {
+public final class LocalCacheManager {
 
     private final ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1,
             new BasicThreadFactory.Builder().namingPattern("cache-refresh-scheduler-%d").build());
 
     @Autowired(required = false)
-    private List<ICache> caches;
+    private List<ILocalCache> caches;
 
     @PostConstruct
     public void init() {
         if (!CollectionUtils.isEmpty(caches)) {
-            caches.sort(Comparator.comparingInt(ICache::getOrder));
+            caches.sort(Comparator.comparingInt(ILocalCache::getOrder));
             caches.forEach(cache -> {
                 long initDelay;
                 if (cache.isInitSync()) {

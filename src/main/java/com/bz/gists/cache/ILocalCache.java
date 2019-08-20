@@ -11,7 +11,7 @@ import java.time.Duration;
  *
  * @author zhongyongbin
  */
-public interface ICache extends Ordered {
+public interface ILocalCache extends Ordered {
     /**
      * 是否需要定时刷新
      *
@@ -32,7 +32,7 @@ public interface ICache extends Ordered {
     void load() throws Exception;
 
     /**
-     * 缓存有效时间，失效后将根据 {@link ICache#refreshNeeded()} 来决定是否调用刷新方法 {@link ICache#refresh()}
+     * 缓存有效时间，失效后将根据 {@link ILocalCache#refreshNeeded()} 来决定是否调用刷新方法 {@link ILocalCache#refresh()}
      *
      * @return 有效时间，单位为秒
      */
