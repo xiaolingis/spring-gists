@@ -13,6 +13,12 @@ public final class AssertUtil {
     private AssertUtil() {
     }
 
+    public static <X extends Throwable> void isTrue(boolean bool, Supplier<X> supplier) throws X {
+        if (!bool) {
+            throw supplier.get();
+        }
+    }
+
     public static <X extends Throwable> void nonNull(Object object, Supplier<X> supplier) throws X {
         if (Objects.isNull(object)) {
             throw supplier.get();
