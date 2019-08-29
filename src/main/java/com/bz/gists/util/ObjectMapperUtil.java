@@ -1,5 +1,6 @@
 package com.bz.gists.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -92,6 +93,22 @@ public final class ObjectMapperUtil {
         try {
             JavaType javaType = getObjectMapper().getTypeFactory().constructParametricType(clazz, parameterClasses);
             return getObjectMapper().readValue(json, javaType);
+        } catch (Exception e) {
+            throw new JsonException("json deserialization error.", e);
+        }
+    }
+
+    /**
+     * 将 json 字符串反序列化为泛型对象
+     *
+     * @param json          json 字符串
+     * @param typeReference 类型参数
+     * @param <T>           要转换的对象类型
+     * @return 通过反序列化得到的对象
+     */
+    public static <T> T transferToObject(String json, TypeReference<T> typeReference) {
+        try {
+            return getObjectMapper().readValue(json, typeReference);
         } catch (Exception e) {
             throw new JsonException("json deserialization error.", e);
         }
