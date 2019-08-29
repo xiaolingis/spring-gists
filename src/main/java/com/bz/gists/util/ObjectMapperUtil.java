@@ -27,7 +27,7 @@ public final class ObjectMapperUtil {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
-            throw new RuntimeException("json serialization error.", e);
+            throw new JsonException("json serialization error.", e);
         }
     }
 
