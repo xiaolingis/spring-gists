@@ -53,7 +53,7 @@ public final class TemporalUtil {
     /**
      * 时间格式化为字符串
      */
-    public static String timeToString(Temporal temporal, DateTimeFormatter formatter) {
+    public static String temporalToString(Temporal temporal, DateTimeFormatter formatter) {
         return formatter.format(temporal);
     }
 

@@ -24,7 +24,7 @@ public final class LogUtil {
 
     public static void dataLog(Logger logger, Object source) {
         Map<String, Object> log = new LinkedHashMap<>();
-        log.put(TIMESTAMP_KEY, TemporalUtil.timeToString(LocalDateTime.now(), TemporalUtil.yyyy_MM_dd_HH_mm_ss_SSS));
+        log.put(TIMESTAMP_KEY, TemporalUtil.temporalToString(LocalDateTime.now(), TemporalUtil.yyyy_MM_dd_HH_mm_ss_SSS));
         log.put(SOURCE_KEY, source);
         logger.info(ObjectMapperUtil.transferToString(log));
     }
@@ -37,7 +37,7 @@ public final class LogUtil {
         Arrays.stream(data).forEach(pair -> source.put(pair.getKey(), pair.getValue()));
 
         logger.info(ObjectMapperUtil.transferToString(new LinkedHashMap<String, Object>() {{
-            this.put(TIMESTAMP_KEY, TemporalUtil.timeToString(LocalDateTime.now(), TemporalUtil.yyyy_MM_dd_HH_mm_ss_SSS));
+            this.put(TIMESTAMP_KEY, TemporalUtil.temporalToString(LocalDateTime.now(), TemporalUtil.yyyy_MM_dd_HH_mm_ss_SSS));
             this.put(SOURCE_KEY, source);
         }}));
     }
