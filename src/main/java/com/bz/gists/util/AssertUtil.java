@@ -19,6 +19,13 @@ public final class AssertUtil {
         }
     }
 
+    public static <X extends Throwable> void requireFalse(boolean bool, Supplier<X> supplier) throws X {
+        if (bool) {
+            throw supplier.get();
+        }
+    }
+
+
     public static <X extends Throwable> void requireNonNull(Object object, Supplier<X> supplier) throws X {
         if (Objects.isNull(object)) {
             throw supplier.get();
