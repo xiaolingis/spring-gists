@@ -1,8 +1,7 @@
 package com.bz.gists.util;
 
-import com.bz.gists.exception.UnexpectedException;
-
 import org.springframework.beans.BeanUtils;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * Created on 2019/1/15
@@ -20,7 +19,8 @@ public final class ExtendClassUtil {
                 BeanUtils.copyProperties(source, extendInstance);
                 return extendInstance;
             } catch (InstantiationException | IllegalAccessException e) {
-                throw new UnexpectedException("exception occurs while instantiating", e);
+                ReflectionUtils.rethrowRuntimeException(e);
+                return null;
             }
         } else {
             throw new IllegalArgumentException("no inheritance");
