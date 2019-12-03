@@ -83,7 +83,7 @@ public final class WeightRoundRandomHelper {
 
             int maxWeight = data.lastKey();
             int score = ThreadLocalRandom.current().nextInt(1, weightRoundData.getTotalWeight() + 1);
-            List<T> result = score > maxWeight ? data.lowerEntry(score).getValue() : data.ceilingEntry(score).getValue();
+            List<T> result = score > maxWeight ? data.get(maxWeight) : data.ceilingEntry(score).getValue();
 
             return Optional.of(result.get(ThreadLocalRandom.current().nextInt(0, result.size())));
         } catch (ExecutionException e) {
