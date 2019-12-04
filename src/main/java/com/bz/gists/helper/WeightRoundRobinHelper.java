@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created on 2019/12/2
@@ -40,7 +41,10 @@ public final class WeightRoundRobinHelper {
             return Optional.empty();
         }
 
-        List<WeightObject<T>> weightObjects = weightRoundData.getWeightObjects();
+        List<WeightObject<T>> weightObjects = weightRoundData.getWeightObjects()
+                .stream()
+                .filter(weightObject -> weightObject.getWeight() > 0)
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(weightObjects)) {
             return Optional.empty();
         }
