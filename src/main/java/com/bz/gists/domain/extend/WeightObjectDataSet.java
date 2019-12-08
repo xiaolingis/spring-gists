@@ -13,7 +13,7 @@ import java.util.UUID;
 public class WeightObjectDataSet<T> {
 
     /**
-     * 用于标识加权轮询数据对象
+     * 用于标识集权数据集
      */
     private final String uuid = UUID.randomUUID().toString();
 

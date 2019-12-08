@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WeightObject<T> {
 
     /**
-     * 权重，赋值后不变
+     * 权重
      */
-    private int weight;
+    private final int weight;
 
     /**
      * 当前权重，用于需要更改权重的算法
