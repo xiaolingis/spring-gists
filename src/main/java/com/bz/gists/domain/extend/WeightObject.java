@@ -19,7 +19,7 @@ public class WeightObject<T> {
     /**
      * 当前权重，用于需要更改权重的算法
      */
-    private AtomicInteger currentWeight;
+    private final AtomicInteger currentWeight = new AtomicInteger(0);
 
     /**
      * 封装对象
@@ -29,7 +29,6 @@ public class WeightObject<T> {
     public WeightObject(int weight, T object) {
         this.weight = weight;
         this.object = object;
-        this.currentWeight = new AtomicInteger(weight);
     }
 
     public int getWeight() {
