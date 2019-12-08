@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import com.bz.gists.domain.extend.WeightObject;
-import com.bz.gists.domain.extend.WeightRoundData;
+import com.bz.gists.domain.extend.WeightObjectDataSet;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
@@ -22,13 +22,13 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created on 2019/12/2
  *
- * 加权轮询随机算法实现。
+ * 加权随机算法实现。
  *
  * @author zhongyongbin
  */
-public final class WeightRoundRandomHelper {
+public final class WeightRandomHelper {
 
-    private static volatile WeightRoundRandomHelper instance;
+    private static volatile WeightRandomHelper instance;
 
     /**
      * 用户缓存算法用到的中间对象
@@ -37,14 +37,14 @@ public final class WeightRoundRandomHelper {
             .expireAfterAccess(Duration.ofMinutes(15))
             .build();
 
-    private WeightRoundRandomHelper() {
+    private WeightRandomHelper() {
     }
 
-    public static WeightRoundRandomHelper getInstance() {
+    public static WeightRandomHelper getInstance() {
         if (Objects.isNull(instance)) {
-            synchronized (WeightRoundRandomHelper.class) {
+            synchronized (WeightRandomHelper.class) {
                 if (Objects.isNull(instance)) {
-                    instance = new WeightRoundRandomHelper();
+                    instance = new WeightRandomHelper();
                 }
             }
         }
@@ -53,12 +53,12 @@ public final class WeightRoundRandomHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> getObject(WeightRoundData<T> weightRoundData) {
-        if (Objects.isNull(weightRoundData)) {
+    public <T> Optional<T> getObject(WeightObjectDataSet<T> weightObjectDataSet) {
+        if (Objects.isNull(weightObjectDataSet)) {
             return Optional.empty();
         }
 
-        List<WeightObject<T>> weightObjects = weightRoundData.getWeightObjects();
+        List<WeightObject<T>> weightObjects = weightObjectDataSet.getWeightObjects();
         if (CollectionUtils.isEmpty(weightObjects)) {
             return Optional.empty();
         }
@@ -68,7 +68,7 @@ public final class WeightRoundRandomHelper {
         }
 
         try {
-            TreeMap<Integer, List<T>> data = (TreeMap<Integer, List<T>>) cache.get(weightRoundData.getUuid(), () -> {
+            TreeMap<Integer, List<T>> data = (TreeMap<Integer, List<T>>) cache.get(weightObjectDataSet.getUuid(), () -> {
                 TreeMap<Integer, List<T>> newData = Maps.newTreeMap();
                 for (WeightObject<T> weightObject : weightObjects) {
                     newData.computeIfPresent(weightObject.getWeight(), (k, v) -> {
@@ -82,7 +82,7 @@ public final class WeightRoundRandomHelper {
             });
 
             int maxWeight = data.lastKey();
-            int score = ThreadLocalRandom.current().nextInt(1, weightRoundData.getTotalWeight() + 1);
+            int score = ThreadLocalRandom.current().nextInt(1, weightObjectDataSet.getTotalWeight() + 1);
             List<T> result = score > maxWeight ? data.get(maxWeight) : data.ceilingEntry(score).getValue();
 
             return Optional.of(result.get(ThreadLocalRandom.current().nextInt(0, result.size())));

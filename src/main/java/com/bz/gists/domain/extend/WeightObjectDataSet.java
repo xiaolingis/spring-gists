@@ -6,11 +6,11 @@ import java.util.UUID;
 /**
  * Created on 2019/12/2
  *
- * 加权轮询数据
+ * 加权轮询数据集
  *
  * @author zhongyongbin
  */
-public class WeightRoundData<T> {
+public class WeightObjectDataSet<T> {
 
     /**
      * 用于标识加权轮询数据对象

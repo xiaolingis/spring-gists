@@ -1,6 +1,6 @@
 package com.bz.gists.helper;
 
-import com.bz.gists.domain.extend.WeightRoundData;
+import com.bz.gists.domain.extend.WeightObjectDataSet;
 import com.bz.gists.domain.extend.WeightObject;
 
 import org.springframework.util.CollectionUtils;
@@ -13,22 +13,22 @@ import java.util.stream.Collectors;
 /**
  * Created on 2019/12/2
  *
- * WeightRound-Robin 算法实现
+ * 集权轮询 WeightRound-Robin 算法实现
  *
  * @author zhongyongbin
  */
-public final class WeightRoundRobinHelper {
+public final class WeightRoundHelper {
 
-    private static volatile WeightRoundRobinHelper instance;
+    private static volatile WeightRoundHelper instance;
 
-    private WeightRoundRobinHelper() {
+    private WeightRoundHelper() {
     }
 
-    public static WeightRoundRobinHelper getInstance() {
+    public static WeightRoundHelper getInstance() {
         if (Objects.isNull(instance)) {
-            synchronized (WeightRoundRobinHelper.class) {
+            synchronized (WeightRoundHelper.class) {
                 if (Objects.isNull(instance)) {
-                    instance = new WeightRoundRobinHelper();
+                    instance = new WeightRoundHelper();
                 }
             }
         }
@@ -36,12 +36,12 @@ public final class WeightRoundRobinHelper {
         return instance;
     }
 
-    public <T> Optional<T> getObject(WeightRoundData<T> weightRoundData) {
-        if (Objects.isNull(weightRoundData)) {
+    public <T> Optional<T> getObject(WeightObjectDataSet<T> weightObjectDataSet) {
+        if (Objects.isNull(weightObjectDataSet)) {
             return Optional.empty();
         }
 
-        List<WeightObject<T>> weightObjects = weightRoundData.getWeightObjects()
+        List<WeightObject<T>> weightObjects = weightObjectDataSet.getWeightObjects()
                 .stream()
                 .filter(weightObject -> weightObject.getWeight() > 0)
                 .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public final class WeightRoundRobinHelper {
             return Optional.empty();
         }
 
-        result.getCurrentWeight().addAndGet(-weightRoundData.getTotalWeight());
+        result.getCurrentWeight().addAndGet(-weightObjectDataSet.getTotalWeight());
 
         return Optional.of(result.getObject());
     }
