@@ -17,7 +17,7 @@ public class WeightObject<T> {
     private int weight;
 
     /**
-     * 当前权重，需要更改权重的算法
+     * 当前权重，用于需要更改权重的算法
      */
     private AtomicInteger currentWeight;
 
