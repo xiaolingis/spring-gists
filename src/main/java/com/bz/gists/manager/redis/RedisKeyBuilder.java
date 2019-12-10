@@ -1,4 +1,4 @@
-package com.bz.gists.redis.common;
+package com.bz.gists.manager.redis;
 
 /**
  * Created on 2019/7/2

@@ -3,7 +3,7 @@ package com.bz.gists.web.advice;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
-import com.bz.gists.domain.response.StateResponse;
+import com.bz.gists.web.response.StateResponse;
 import com.bz.gists.exception.ForbiddenException;
 import com.bz.gists.exception.InvalidParameterException;
 import com.bz.gists.exception.NotFoundException;

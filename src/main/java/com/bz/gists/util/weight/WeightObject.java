@@ -1,4 +1,4 @@
-package com.bz.gists.domain.extend;
+package com.bz.gists.util.weight;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

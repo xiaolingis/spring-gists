@@ -1,6 +1,4 @@
-package com.bz.gists.helper;
-
-import com.bz.gists.domain.extend.RangeCondition;
+package com.bz.gists.util.range;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author zhongyongbin
  */
-public final class RangeConditionHelper {
+public final class RangeConditionUtil {
 
     private static final String NEGATIVE_INFINITY = "-inf";
 
@@ -27,7 +25,7 @@ public final class RangeConditionHelper {
 
     private static final String RIGHT_EXCLUDE = ")";
 
-    private RangeConditionHelper() {
+    private RangeConditionUtil() {
     }
 
     /**

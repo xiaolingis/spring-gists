@@ -1,4 +1,4 @@
-package com.bz.gists.redis.common;
+package com.bz.gists.manager.redis;
 
 import com.bz.gists.util.BeanMapUtil;
 import com.fasterxml.jackson.databind.JavaType;
@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @author zhongyongbin
  */
-public abstract class AbstractCacheRedis<T> extends AbstractRedis {
+public abstract class AbstractCacheRedisManager<T> extends AbstractRedisManager {
 
     @Autowired
     private ObjectMapper objectMapper;

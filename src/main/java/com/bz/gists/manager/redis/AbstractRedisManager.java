@@ -1,4 +1,4 @@
-package com.bz.gists.redis.common;
+package com.bz.gists.manager.redis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  *
  * @author zhongyongbin
  */
-public abstract class AbstractRedis {
+public abstract class AbstractRedisManager {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractRedis.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractRedisManager.class);
 
     @Autowired
     protected StringRedisTemplate redisTemplate;

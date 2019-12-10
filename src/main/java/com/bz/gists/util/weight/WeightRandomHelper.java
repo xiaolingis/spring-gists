@@ -1,12 +1,9 @@
-package com.bz.gists.helper;
+package com.bz.gists.util.weight;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import com.bz.gists.domain.extend.WeightObject;
-import com.bz.gists.domain.extend.WeightObjectDataSet;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;

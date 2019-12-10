@@ -1,4 +1,4 @@
-package com.bz.gists.cache;
+package com.bz.gists.manager.cache;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package com.bz.gists.config;
 
-import com.bz.gists.domain.extend.RangeCondition;
-import com.bz.gists.helper.RangeConditionHelper;
+import com.bz.gists.util.range.RangeCondition;
+import com.bz.gists.util.range.RangeConditionUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -25,7 +25,7 @@ public class RangeConditionJsonComponent {
 
         @Override
         public void serialize(RangeCondition value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            gen.writeString(RangeConditionHelper.conditionToString(value));
+            gen.writeString(RangeConditionUtil.conditionToString(value));
         }
     }
 
@@ -33,7 +33,7 @@ public class RangeConditionJsonComponent {
 
         @Override
         public RangeCondition deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            return RangeConditionHelper.stringToCondition(p.getValueAsString());
+            return RangeConditionUtil.stringToCondition(p.getValueAsString());
         }
     }
 }

@@ -1,7 +1,4 @@
-package com.bz.gists.helper;
-
-import com.bz.gists.domain.extend.WeightObjectDataSet;
-import com.bz.gists.domain.extend.WeightObject;
+package com.bz.gists.util.weight;
 
 import org.springframework.util.CollectionUtils;
 

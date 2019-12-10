@@ -1,4 +1,4 @@
-package com.bz.gists.domain.response;
+package com.bz.gists.web.response;
 
 /**
  * Created on 2019/4/28
